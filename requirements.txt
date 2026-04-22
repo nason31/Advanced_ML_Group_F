@@ -1,0 +1,22 @@
+# Data
+pandas==2.2.2
+numpy==1.26.4
+pyarrow==16.0.0
+
+# Forecasting
+lightgbm==4.3.0
+
+# RAG
+chromadb==0.5.0
+sentence-transformers==3.0.1
+
+# LLM
+anthropic==0.28.0
+
+# Frontend
+streamlit==1.35.0
+
+# Dev / test
+pytest==8.2.2
+python-dotenv==1.0.1
+kaggle==1.6.14

@@ -1,0 +1,23 @@
+# data (never commit raw data)
+data/raw/
+data/processed/
+data/vector_store/
+
+# env
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# OS
+.DS_Store
