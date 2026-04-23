@@ -33,12 +33,12 @@
 | ⚪ Whole team | Start GenAI log | Required deliverable. Start documenting every AI tool used (Claude, ChatGPT) with prompts, outputs, and decisions made. |
 
 ### End of Week 1 checklist
-- [ ] Team roles agreed
-- [ ] GenAI log started
-- [ ] M5 data downloaded
+- [x] Team roles agreed
+- [x] GenAI log started
+- [x] M5 data downloaded
 - [ ] LightGBM baseline running
-- [ ] GitHub repo set up
-- [ ] Business plan draft started
+- [x] GitHub repo set up
+- [x] Business plan draft started
 - [ ] ROI numbers calculated
 - [ ] Competitor research done
 
