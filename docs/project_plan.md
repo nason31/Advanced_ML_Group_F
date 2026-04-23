@@ -36,7 +36,7 @@
 - [x] Team roles agreed
 - [x] GenAI log started
 - [x] M5 data downloaded
-- [ ] LightGBM baseline running
+- [x] LightGBM baseline running
 - [x] GitHub repo set up
 - [x] Business plan draft started
 - [ ] ROI numbers calculated
