@@ -31,3 +31,7 @@ venv/
 
 # OS
 .DS_Store
+
+# Editors
+.vscode/
+.idea/
