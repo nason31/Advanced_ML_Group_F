@@ -15,7 +15,10 @@ src.rag.ingest.ingest_docs() to embed them in the existing collection at
 data/vector_store/. Re-running clears the source directory first, so the
 corpus is deterministic for a given M5 snapshot.
 """
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import pandas as pd
 

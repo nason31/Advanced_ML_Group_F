@@ -9,7 +9,10 @@ Produces, for each store in STORES:
 
 Also prints validation WRMSSE per store (last 28 days held out).
 """
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import joblib
 import numpy as np
