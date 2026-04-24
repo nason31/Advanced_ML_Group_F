@@ -5,6 +5,7 @@ data/vector_store/
 
 # env
 .env
+.streamlit/secrets.toml
 
 # Python
 __pycache__/

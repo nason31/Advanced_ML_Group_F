@@ -2,6 +2,7 @@
 
 Called from src/recommendations/engine.py. Pure adapter, no training.
 """
+from functools import lru_cache
 from pathlib import Path
 
 import joblib
@@ -19,15 +20,18 @@ FEATURE_COLS = [
 ]
 
 
+@lru_cache(maxsize=8)
 def load_model(store_id: str, data_dir: Path) -> lgb.Booster:
     path = Path(data_dir) / f"model_{store_id}.pkl"
     return joblib.load(path)
 
 
+@lru_cache(maxsize=8)
 def _load_features(store_id: str, data_dir: Path) -> pd.DataFrame:
     return pd.read_parquet(Path(data_dir) / f"features_{store_id}.parquet")
 
 
+@lru_cache(maxsize=8)
 def _load_idmap(store_id: str, data_dir: Path) -> pd.DataFrame:
     return pd.read_parquet(Path(data_dir) / f"idmap_{store_id}.parquet")
 
