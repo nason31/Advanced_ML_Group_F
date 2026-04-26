@@ -116,5 +116,22 @@ Human Review: Reviewed every diff before committing. Rejected two Claude suggest
 
 ---
 
+Date: 2026-04-26
+Team Member: Justus
+Tool Used: Claude Code (claude-opus-4-7)
+Task: Live end-to-end smoke test of the run_pipeline branch from Apr 24 - get the Streamlit app actually generating Claude-backed briefings on real M5 data, fix whatever surfaces, then commit the artifacts and push so the branch is ready to deploy to Streamlit Cloud.
+AI Contribution: Two debugging-and-fix commits plus the artifact commit, all on branch feat/wire-run-pipeline-and-deploy:
+  (1) 1bfb1f2 fix: unblock end-to-end Streamlit smoke test. Three independent issues surfaced when the Streamlit run was first attempted; Claude diagnosed each one from process state and wrote the fix:
+      - app/main.py: ModuleNotFoundError: No module named 'app' on launch. streamlit run app/main.py puts app/ on sys.path, not the repo root. Added the same sys.path.insert(repo_root) hack we used for the scripts.
+      - src/rag/retriever.py: pipeline hung indefinitely on the first retrieve() call. Diagnosed via lsof showing an ESTABLISHED connection to a HuggingFace CDN in CLOSE_WAIT state - SentenceTransformerEmbeddingFunction makes a network "is your cached model up to date" call on every instantiation, and that call was hanging behind the HF load balancer. Fix: HF_HUB_OFFLINE=1 + TRANSFORMERS_OFFLINE=1 + lru_cache on the (client, ef, collection) trio so retrieve() loads sentence-transformers exactly once.
+      - src/rag/retriever.py: a separate hang showed up on a leaked loky POSIX semaphore (/loky-PID-XXX) when the script ran outside an `if __name__ == "__main__":` guard - sentence-transformers spawns a worker pool via joblib that deadlocks on macOS spawn. Fix: TOKENIZERS_PARALLELISM=false + OMP_NUM_THREADS=1.
+      - requirements.txt: anthropic 0.39.0 raises TypeError: Client.__init__() got an unexpected keyword argument 'proxies' against modern httpx. Bumped to 0.97.0 (the latest at time of fix).
+  (2) b6fd25d chore(data): commit the serve-time artifacts. data/processed/model_*.pkl + features_*.parquet + idmap_*.parquet (~3MB), data/rag_source/*.txt (57 blurbs, ~5KB), data/vector_store/ (~2.5MB ChromaDB). 72 files, ~5.6MB total. Necessary because Streamlit Cloud has no Kaggle credentials and would otherwise hit the no-trained-model error path.
+  Plus instrumented engine.py with timing prints during diagnosis (later removed pre-commit).
+  Live smoke test result on CA_1: 3 well-formed Restock recommendations (FOODS_3_785 +419.6%, FOODS_3_324 +395.9%, HOBBIES_1_232 +359.2%) in ~48 seconds end-to-end. All 3 over-flagged by the keyword-match guard (Claude mentions "markdown" in passing as one of the available rec types; flagged for tightening in a follow-up branch).
+Human Review: Drove the diagnostic process - rejected the first hypothesis (Streamlit's threading model) when the same hang reproduced from a plain python -c invocation. Authorised each force-kill before issuing it. Switched the Python env from venv 3.9 to a conda merchai env at 3.12 mid-session after PEP 604 union syntax errors surfaced. Generated a fresh Kaggle legacy API token after Claude flagged that the original "KGAT..." string was a Kaggle competition submission token, not the API credential. Approved the requirements.txt anthropic bump from 0.39.0 to 0.97.0 only after confirming the failure reproduced and the bump fixed it. Pushed the artifact commit knowing it would land ~5.6MB of binaries in git rather than going via S3, on the basis that Streamlit Cloud does not have Kaggle creds and the 100MB GitHub file limit is comfortably above. After tests went green (18 passed including the previously-hanging test_retriever), pushed the branch and opened the PR via the GitHub web UI manually because gh CLI is not installed locally. Logged this entry per the mandatory end-of-session rule we added to CLAUDE.md yesterday.
+
+---
+
 <!-- Append new entries below this line, in chronological (oldest-first) order. Follow the template at the top of the file. -->
 
