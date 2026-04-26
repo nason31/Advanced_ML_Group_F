@@ -1,10 +1,20 @@
 # data (never commit raw data)
 data/raw/
-data/processed/
-data/vector_store/
+
+# data/processed: ignore everything except serve-time model + feature artifacts
+data/processed/*
+!data/processed/*.pkl
+!data/processed/*.parquet
+
+# data/vector_store: track the full ChromaDB directory so Streamlit Cloud can
+# serve without a cold-start rebuild. data/rag_source/ (the source .txt blurbs)
+# is not ignored and also tracked for transparency.
+data/vector_store/*
+!data/vector_store/**
 
 # env
 .env
+.streamlit/secrets.toml
 
 # Python
 __pycache__/
@@ -21,3 +31,7 @@ venv/
 
 # OS
 .DS_Store
+
+# Editors
+.vscode/
+.idea/

@@ -110,7 +110,7 @@ docs/feature_overview.md       Feature table with rubric mapping
 
 **No long dashes.** Use short dashes (-) only, never em dashes or double dashes.
 
-**GenAI log discipline.** After any substantive session, remind Leticia to add an entry to `docs/genai_transparency_log.md`. It is a required deliverable and must be honest.
+**GenAI log discipline (mandatory, end of every session).** Before wrapping up any substantive AI-assisted session, you MUST either (a) write a new entry in `docs/genai_transparency_log.md` yourself, or (b) draft one and offer it to the user for review. Do not end the session without this step. Entries are appended at the bottom (chronological / oldest-first order) and must cover: date, team member, tool + model, task, specific AI contribution (files touched, commits, design choices), and the human review performed. This is a required graded deliverable - missing entries reduce the grade, and the LLM judge will check for back-filling patterns, so log as the work happens, not at the end.
 
 ---
 

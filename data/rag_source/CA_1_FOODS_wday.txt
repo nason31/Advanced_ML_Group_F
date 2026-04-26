@@ -1,0 +1,1 @@
+In CA_1, FOODS sales peak on Sunday at 2.52 units/day (trough 1.61, weekly spread +56.3%). Use this to time weekly promotions and replenishment windows.

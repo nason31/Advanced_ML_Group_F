@@ -1,0 +1,1 @@
+In TX_1, FOODS_1 SKUs average 6.53 weekly units in weeks with a >=10% price drop vs 6.21 at stable prices (+5.2%, n=264 drop weeks observed). Use this when sizing markdown uplift.

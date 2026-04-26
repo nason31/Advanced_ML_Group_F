@@ -1,0 +1,1 @@
+In TX_1, HOUSEHOLD_1 SKUs average 5.52 weekly units in weeks with a >=10% price drop vs 7.89 at stable prices (-30.1%, n=269 drop weeks observed). Use this when sizing markdown uplift.

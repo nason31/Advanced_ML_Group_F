@@ -1,0 +1,1 @@
+In CA_2, HOBBIES_1 SKUs average 5.76 weekly units in weeks with a >=10% price drop vs 5.10 at stable prices (+13.0%, n=37 drop weeks observed). Use this when sizing markdown uplift.

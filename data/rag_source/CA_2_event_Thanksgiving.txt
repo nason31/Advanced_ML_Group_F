@@ -1,0 +1,1 @@
+In CA_2, Thanksgiving produces average sales of 0.46 units/day (-52.8% vs the 0.98 all-day baseline, n=15245 item-day observations). Factor this event when it falls within the forecast horizon.
