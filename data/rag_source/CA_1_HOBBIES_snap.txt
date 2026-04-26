@@ -1,0 +1,1 @@
+In CA_1, the HOBBIES category averages 0.84 units/day on SNAP days versus 0.80 units/day on non-SNAP days (+4.6%). SNAP benefit disbursement days concentrate grocery demand and should be treated as structured demand shocks rather than random variance.

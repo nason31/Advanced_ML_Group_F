@@ -1,0 +1,1 @@
+In TX_1, HOUSEHOLD sales peak on Sunday at 0.88 units/day (trough 0.60, weekly spread +46.8%). Use this to time weekly promotions and replenishment windows.

@@ -1,0 +1,1 @@
+In TX_1, FOODS sales peak on Sunday at 1.72 units/day (trough 1.22, weekly spread +40.7%). Use this to time weekly promotions and replenishment windows.

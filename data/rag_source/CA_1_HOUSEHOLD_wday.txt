@@ -1,0 +1,1 @@
+In CA_1, HOUSEHOLD sales peak on Sunday at 0.97 units/day (trough 0.58, weekly spread +67.4%). Use this to time weekly promotions and replenishment windows.

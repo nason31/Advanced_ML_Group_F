@@ -1,0 +1,1 @@
+In CA_1, HOUSEHOLD_2 SKUs average 2.47 weekly units in weeks with a >=10% price drop vs 2.42 at stable prices (+1.8%, n=79 drop weeks observed). Use this when sizing markdown uplift.
