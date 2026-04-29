@@ -18,10 +18,10 @@ streamlit run app/main.py
 
 | Area | Owner | Key files |
 |------|-------|-----------|
-| Data + Forecasting | TBD | `src/data/`, `src/forecast/` |
-| LLM + RAG + Frontend | TBD | `src/llm/`, `src/rag/`, `app/` |
-| Business Plan | TBD | `docs/business_plan/` |
-| Floater / Demo | TBD | `docs/genai_transparency_log.md` |
+| Data pipeline + LLM + Recommendations | Leticia | `src/data/`, `src/llm/`, `src/recommendations/`, `app/` |
+| Forecasting + RAG + Scripts | Justus | `src/forecast/`, `src/rag/`, `scripts/`, `notebooks/`, `app/` |
+| Business Plan | Alex | `docs/business_plan/` |
+| Pitch deck + Demo script + GenAI log | Marie | `docs/` |
 
 ## Running Tests
 

@@ -71,10 +71,10 @@ All GenAI usage must be logged in `docs/genai_transparency_log.md`. Unacknowledg
 
 | Person | Track | Owns |
 |--------|-------|------|
-| Leticia | Tech | Data pipeline, LLM layer, frontend, GenAI log |
-| [Teammate 2] | Tech | Forecasting model, RAG layer, deployment |
-| [Teammate 3] | Business | Business plan, pitch deck, ROI story |
-| [Teammate 4] | Float | Demo script, GenAI log, presentation bridge |
+| Leticia | Tech | Data pipeline, LLM layer, recommendations, frontend (shared) |
+| Justus | Tech | Forecasting, RAG, scripts, deployment, frontend (shared) |
+| Alex | Business | Business plan, ROI story, unit economics |
+| Marie | Float | Pitch deck, demo script, GenAI log compilation |
 
 ---
 
