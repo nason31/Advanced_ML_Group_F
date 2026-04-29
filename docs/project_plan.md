@@ -79,6 +79,8 @@
 |-------|------|-------------|
 | 🟢 Tech | Demo scenario | Lock the live walkthrough: "Store #7, Monday morning. 3 markdown recs, 1 promo alert. Accept one — show margin impact + audit trail." |
 | 🟢 Tech | Hallucination guard | ✅ Implement output verification: LLM claim vs database cross-check. Show it catching a discrepancy in the demo. |
+| 🟢 Tech | Confidence display | ✅ High / Medium / Low badge on every card derived from delta_pct. Green / amber / red with exact delta shown. |
+| 🟢 Tech | Ask Your Data | ✅ Natural language Q&A over store data. Claude answers grounded in live forecast + RAG context. |
 | ⚪ Whole team | Finalize pitch deck | Full design pass on slides. Tight narrative, no walls of text. Investor pitch tone — every slide earns its place. |
 | 🔵 Business | GenAI transparency log | Compile the full appendix of AI tool usage. Required for Deliverable 1. Include prompts, outputs, and what you changed manually. |
 | 🟠 Presentation | Dry runs | At least 2 full run-throughs with the live demo. Time it. Practice the "what's your moat?" and "why not OpenAI?" questions. |

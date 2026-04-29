@@ -23,6 +23,25 @@ Human Review: [what you changed, verified, or rejected]
 Date: 2026-04-29
 Team Member: Leticia
 Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Building Confidence display and Conversational "Ask Your Data" features, plus fixing 5 code and doc inconsistencies identified in a full codebase review.
+AI Contribution: Claude implemented across 9 commits on main:
+  Confidence display (2 commits):
+  (1) src/recommendations/engine.py - added _compute_confidence() helper (High >100%, Medium 30-100%, Low <30% delta_pct) and confidence + delta_pct fields to Rec dataclass.
+  (2) app/components/briefing_card.py - green/amber/red badge top-right of each card with exact delta_pct below it.
+  Ask Your Data (3 commits):
+  (3) src/llm/prompts.py - added QA_SYSTEM_PROMPT (conversational, citation-required, plain language) and build_qa_prompt() alongside existing recommendation prompts.
+  (4) src/llm/qa.py - new answer_question() function reusing forecast_with_names, summarize_forecast, retrieve, and _get_client(). top_k=5 SKUs and k=4 RAG docs for broader Q&A grounding vs top_k=3 / k=3 for recs.
+  (5) app/main.py - Ask Your Data section below audit trail: text input with example placeholder, Ask button, answer displayed inline with spinner.
+  Codebase fixes (4 commits):
+  (6) docs/architecture.md - full rewrite splitting training vs serve pipeline. Previous diagram was missing serve.py and summarize.py entirely.
+  (7) docs/feature_overview.md - fixed hallucination guard description (said suppressed, actually surfaced), split built vs planned features with effort/gain/priority ratings.
+  (8) src/llm/guard.py - replaced generic 'feature' phrase in PROMOTE_PHRASES with 'feature placement' and 'feature in flyer' to avoid false positive matches.
+  (9) src/llm/reasoner.py - Anthropic client now created once as module-level singleton via _get_client() instead of on every reason() call.
+Human Review: Defined confidence thresholds based on retail signal strength intuition (>100% is an unambiguous act signal, <30% warrants human verification). Reviewed all fixes before committing - confirmed architecture diagram accurately reflects current code flow. Approved splitting feature_overview.md into built vs planned so the business track has an honest picture of what exists. Verified qa.py reuses existing layers correctly with no new dependencies introduced.
+
+Date: 2026-04-29
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
 Task: Hardening the hallucination guard and tightening the LLM system prompt to reduce false flags and catch real hallucinations.
 AI Contribution: Claude implemented changes across 4 files in 4 commits on leticia-branch:
   (1) src/llm/prompts.py - rewrote system prompt with strict data rules: verbatim number citation, one recommendation per response, no passing mentions of other rec types. Updated build_user_prompt to explicitly ask Claude to reference the exact delta percentage.
