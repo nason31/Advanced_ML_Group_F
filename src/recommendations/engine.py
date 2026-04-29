@@ -43,7 +43,12 @@ def run_pipeline(
 
         guard_out = check({"text": rec_text}, {"direction": seed["direction"]})
 
-        rec_type = "markdown" if seed["direction"] == "down" else "restock"
+        if seed["direction"] == "down":
+            rec_type = "markdown"
+        elif seed.get("promote_candidate"):
+            rec_type = "promote"
+        else:
+            rec_type = "restock"
         recs.append(Rec(
             rec_type=rec_type,
             text=rec_text,
