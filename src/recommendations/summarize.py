@@ -51,16 +51,19 @@ def summarize_forecast(
             f"- {item} ({cat}, dept {dept}): predicted {row['predicted']:.2f} units, "
             f"28-day baseline {row['baseline']:.2f}, delta {pct:+.1f}%"
         )
+        promote_candidate = pct > 15.0
         seeds.append({
             "item_id": item,
             "dept_id": dept,
             "cat_id": cat,
             "direction": row["direction"],
             "delta_pct": pct,
+            "promote_candidate": promote_candidate,
             "focus_line": (
                 f"Focus this recommendation on SKU {item} in category {cat}: "
                 f"predicted {row['predicted']:.2f} units vs baseline {row['baseline']:.2f} "
                 f"({pct:+.1f}%). Trend direction: {row['direction']}."
+                + (" This SKU is a PROMOTE THIS candidate — strong upward momentum." if promote_candidate else "")
             ),
         })
 
