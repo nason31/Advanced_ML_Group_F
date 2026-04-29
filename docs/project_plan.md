@@ -13,10 +13,10 @@
 
 | Badge | Role |
 |-------|------|
-| 🔵 Business | 1–2 people |
-| 🟢 Tech | 1–2 people |
-| 🟠 Presentation | — |
-| ⚪ Whole team | — |
+| 🔵 Business | Alex |
+| 🟢 Tech | Leticia, Justus |
+| 🟠 Presentation | Marie |
+| ⚪ Whole team | Leticia, Justus, Alex, Marie |
 
 ---
 
@@ -82,7 +82,7 @@
 | 🟢 Tech | Confidence display | ✅ High / Medium / Low badge on every card derived from delta_pct. Green / amber / red with exact delta shown. |
 | 🟢 Tech | Ask Your Data | ✅ Natural language Q&A over store data. Claude answers grounded in live forecast + RAG context. |
 | ⚪ Whole team | Finalize pitch deck | Full design pass on slides. Tight narrative, no walls of text. Investor pitch tone — every slide earns its place. |
-| 🔵 Business | GenAI transparency log | Compile the full appendix of AI tool usage. Required for Deliverable 1. Include prompts, outputs, and what you changed manually. |
+| ⚪ Whole team | GenAI transparency log | Every team member logs their own AI-assisted sessions as they happen. Marie compiles the final appendix. Required for Deliverable 1 - the LLM judge checks for completeness. |
 | 🟠 Presentation | Dry runs | At least 2 full run-throughs with the live demo. Time it. Practice the "what's your moat?" and "why not OpenAI?" questions. |
 | 🟠 Presentation | Q&A prep | Prepare answers: hallucination risk, data privacy, forecasting accuracy claims, GTM first customer, pricing justification. |
 
