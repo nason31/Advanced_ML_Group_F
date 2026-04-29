@@ -18,6 +18,9 @@ def render_card(rec: Rec, index: int) -> str | None:
         st.markdown(f"**[{rec.rec_type.upper()}]** {rec.text}")
         if rec.flagged:
             st.warning(f"Guard flagged: {rec.flag_reason}")
+        with st.expander("Guard checks", expanded=rec.flagged):
+            st.caption(f"Intent:  {rec.intent_check or 'SKIP'}")
+            st.caption(f"Numerics: {rec.numeric_check or 'SKIP'}")
         col1, col2 = st.columns(2)
         accepted = col1.button("Accept", key=f"accept_{index}")
         rejected = col2.button("Reject", key=f"reject_{index}")
