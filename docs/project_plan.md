@@ -59,11 +59,11 @@
 | 🔵 Business | Pitch deck skeleton | Draft slide outline: problem → solution → demo → tech stack → business model → moat → ask. No full design yet. |
 
 ### End of Week 2 checklist
-- [ ] LLM reasoning layer working
-- [ ] RAG layer returning context
+- [x] LLM reasoning layer working
+- [x] RAG layer returning context
 - [ ] Promote This module done
-- [ ] Dashboard UI built
-- [ ] Deployed to live URL
+- [x] Dashboard UI built
+- [ ] Deployed to live URL (config ready, not confirmed live)
 - [ ] Business plan draft complete
 - [ ] Pitch deck first draft done
 - [ ] Moat & safety section written
