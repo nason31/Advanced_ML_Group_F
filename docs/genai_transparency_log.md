@@ -133,5 +133,18 @@ Human Review: Drove the diagnostic process - rejected the first hypothesis (Stre
 
 ---
 
+Date: 2026-04-29
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Implementing the "Promote This" recommendation module - the third rec type alongside markdown and restock - and documenting its business logic in the plan.
+AI Contribution: Claude implemented the feature across 4 files in 4 separate commits on leticia-branch:
+  (1) src/recommendations/summarize.py - added promote_candidate flag (delta_pct > +15% above 28-day baseline) to each rec seed, with an explanatory note appended to the focus_line so the LLM knows it is a strong-momentum SKU.
+  (2) src/recommendations/engine.py - updated rec_type assignment logic: "markdown" for down-trending SKUs, "promote" for promote_candidate=True, "restock" for everything else.
+  (3) src/llm/prompts.py - added explicit definitions of all three rec types to the system prompt, including channel-action guidance for PROMOTE THIS (end-cap placement, weekly flyer, BOGO) so Claude generates actionable promotion copy rather than generic restock advice.
+  (4) app/components/briefing_card.py - colour-coded briefing cards: green for promote, red for guard-flagged, blue for markdown/restock.
+  Also updated docs/business_plan/outline.md to document the threshold logic (>+15% = momentum signal worth amplifying) for the business track teammates.
+  Also updated docs/project_plan.md to mark Week 2 checkboxes (LLM layer, RAG layer, dashboard UI) as complete based on Justus's Apr 24/26 commits, and noted remaining gaps (Promote This - now done, deployment URL, business deliverables).
+Human Review: Defined the +15% threshold based on business reasoning - strong enough signal to isolate genuine momentum from noise, defensible in Q&A as calibratable per retailer margin targets. Verified the priority order in engine.py (markdown takes precedence over promote, promote over restock) reflects correct merchandising logic. Confirmed the system prompt additions do not contradict the existing hallucination guard instruction. Reviewed all 4 diffs before each commit was pushed.
+
 <!-- Append new entries below this line, in chronological (oldest-first) order. Follow the template at the top of the file. -->
 
