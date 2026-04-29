@@ -16,6 +16,24 @@ class Rec:
     flag_reason: str
     intent_check: str = ""
     numeric_check: str = ""
+    confidence: str = ""  # "High" | "Medium" | "Low"
+    delta_pct: float = 0.0
+
+
+def _compute_confidence(delta_pct: float) -> str:
+    """Derive confidence from forecast signal strength.
+
+    Thresholds reflect retail merchandising intuition:
+    - High (>100%): very strong momentum, act with confidence
+    - Medium (30-100%): solid signal, reasonable to act
+    - Low (<30%): weak signal, manager should verify before acting
+    """
+    abs_delta = abs(delta_pct)
+    if abs_delta > 100:
+        return "High"
+    elif abs_delta > 30:
+        return "Medium"
+    return "Low"
 
 
 def run_pipeline(
@@ -61,6 +79,8 @@ def run_pipeline(
             flag_reason=guard_out["reason"],
             intent_check=guard_out["intent_check"],
             numeric_check=guard_out["numeric_check"],
+            confidence=_compute_confidence(seed["delta_pct"]),
+            delta_pct=seed["delta_pct"],
         ))
 
     return recs
