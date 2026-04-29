@@ -14,6 +14,8 @@ class Rec:
     text: str
     flagged: bool
     flag_reason: str
+    intent_check: str = ""
+    numeric_check: str = ""
 
 
 def run_pipeline(
@@ -41,7 +43,10 @@ def run_pipeline(
             context_docs=context_docs,
         )
 
-        guard_out = check({"text": rec_text}, {"direction": seed["direction"]})
+        guard_out = check(
+            {"text": rec_text},
+            {"direction": seed["direction"], "delta_pct": seed["delta_pct"]},
+        )
 
         if seed["direction"] == "down":
             rec_type = "markdown"
@@ -54,6 +59,8 @@ def run_pipeline(
             text=rec_text,
             flagged=guard_out["flagged"],
             flag_reason=guard_out["reason"],
+            intent_check=guard_out["intent_check"],
+            numeric_check=guard_out["numeric_check"],
         ))
 
     return recs
