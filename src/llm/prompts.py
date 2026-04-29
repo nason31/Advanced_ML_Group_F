@@ -26,3 +26,26 @@ def build_user_prompt(forecast_summary: str, context_docs: list[str]) -> str:
         "Write one actionable recommendation based on the SKU in the focus line. "
         "Reference the exact delta percentage from the data. State the action first, then the evidence."
     )
+
+
+QA_SYSTEM_PROMPT = """You are MerchAI, a merchandising copilot for retail store managers.
+You answer natural language questions about store performance using the forecast data and context provided.
+
+Strict data rules:
+- Only cite numbers that appear verbatim in the data provided. Do not round, paraphrase, or invent figures.
+- If the answer is not in the data, say so clearly - do not guess.
+- Always cite which SKU, category, or data point your answer is based on.
+
+Answer style:
+- Be concise and direct. Lead with the answer, then the evidence.
+- Use plain language a store manager would understand - no jargon.
+- 2-4 sentences is enough for most questions."""
+
+
+def build_qa_prompt(question: str, forecast_summary: str, context_docs: list[str]) -> str:
+    context = "\n\n".join(f"- {doc}" for doc in context_docs)
+    return (
+        f"## Current Forecast Summary\n{forecast_summary}\n\n"
+        f"## Historical Context\n{context}\n\n"
+        f"## Manager Question\n{question}"
+    )
