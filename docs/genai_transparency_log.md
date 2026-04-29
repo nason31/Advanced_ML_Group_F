@@ -23,6 +23,18 @@ Human Review: [what you changed, verified, or rejected]
 Date: 2026-04-29
 Team Member: Leticia
 Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Hardening the hallucination guard and tightening the LLM system prompt to reduce false flags and catch real hallucinations.
+AI Contribution: Claude implemented changes across 4 files in 4 commits on leticia-branch:
+  (1) src/llm/prompts.py - rewrote system prompt with strict data rules: verbatim number citation, one recommendation per response, no passing mentions of other rec types. Updated build_user_prompt to explicitly ask Claude to reference the exact delta percentage.
+  (2) src/llm/guard.py - full rewrite. Two checks: (a) Intent check using ~54 hardcoded retail action phrases across markdown / restock / promote categories - detects Claude's recommended action and flags if it contradicts the forecast direction. (b) Numeric check using regex to extract the first percentage from Claude's text, compared against actual delta_pct with 2x tolerance - catches fabricated figures. Returns intent_check and numeric_check result strings for UI display.
+  (3) src/recommendations/engine.py - passes delta_pct from seed data into check(), adds intent_check and numeric_check fields to the Rec dataclass so the UI can display them.
+  (4) app/components/briefing_card.py - adds a "Guard checks" expander to every card showing intent and numeric check outcomes. Collapsed by default, auto-expands when a card is flagged.
+  Also discussed the decision not to use a second Claude API call for intent classification (doubles cost and latency, hurts unit economics story) and the rationale for 2x numeric tolerance (catches hallucinations, not rounding).
+Human Review: Defined the phrase lists collaboratively - reviewed all ~54 phrases for retail relevance and confirmed coverage. Decided on hardcoded phrases over an ML classifier after weighing demo reliability vs accuracy. Set the 2x tolerance threshold based on what counts as a plausible rounding vs a fabricated number. Confirmed the expander UX - collapsed by default so the UI is not cluttered, but auto-opens on flagged cards so the guard moment is visible to demo audience without manual interaction.
+
+Date: 2026-04-29
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
 Task: Implementing the "Promote This" recommendation module - the third rec type alongside markdown and restock - and documenting its business logic in the plan.
 AI Contribution: Claude implemented the feature across 4 files in 4 separate commits on leticia-branch:
   (1) src/recommendations/summarize.py - added promote_candidate flag (delta_pct > +15% above 28-day baseline) to each rec seed, with an explanatory note appended to the focus_line so the LLM knows it is a strong-momentum SKU.

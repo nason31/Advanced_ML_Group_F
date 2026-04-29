@@ -61,7 +61,7 @@
 ### End of Week 2 checklist
 - [x] LLM reasoning layer working
 - [x] RAG layer returning context
-- [ ] Promote This module done
+- [x] Promote This module done
 - [x] Dashboard UI built
 - [ ] Deployed to live URL (config ready, not confirmed live)
 - [ ] Business plan draft complete
@@ -78,7 +78,7 @@
 | Owner | Task | Description |
 |-------|------|-------------|
 | 🟢 Tech | Demo scenario | Lock the live walkthrough: "Store #7, Monday morning. 3 markdown recs, 1 promo alert. Accept one — show margin impact + audit trail." |
-| 🟢 Tech | Hallucination guard | Implement output verification: LLM claim vs database cross-check. Show it catching a discrepancy in the demo. |
+| 🟢 Tech | Hallucination guard | ✅ Implement output verification: LLM claim vs database cross-check. Show it catching a discrepancy in the demo. |
 | ⚪ Whole team | Finalize pitch deck | Full design pass on slides. Tight narrative, no walls of text. Investor pitch tone — every slide earns its place. |
 | 🔵 Business | GenAI transparency log | Compile the full appendix of AI tool usage. Required for Deliverable 1. Include prompts, outputs, and what you changed manually. |
 | 🟠 Presentation | Dry runs | At least 2 full run-throughs with the live demo. Time it. Practice the "what's your moat?" and "why not OpenAI?" questions. |
@@ -92,7 +92,7 @@
 - [ ] All Q&A answers practiced
 - [ ] Pitch timed at 10–12 min
 - [ ] Everyone knows their section
-- [ ] Hallucination guard demo ready
+- [x] Hallucination guard demo ready
 
 > ⚠️ **Risk:** After Day 17 the answer to "should we add X?" is always **no**. A stable demo beats a feature-rich broken one every time.
 
