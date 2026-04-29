@@ -8,6 +8,7 @@ import streamlit as st
 
 from app.components.audit_trail import render_audit
 from app.components.briefing_card import render_card
+from src.llm.qa import answer_question
 from src.recommendations.engine import run_pipeline
 
 DATA_DIR = Path("data/processed")
@@ -63,3 +64,30 @@ else:
             })
 
 render_audit(st.session_state.audit_log)
+
+st.divider()
+st.subheader("Ask Your Data")
+st.caption("Ask a natural language question about this store's performance. Answers are grounded in forecast data and historical context.")
+
+question = st.text_input(
+    "Your question",
+    placeholder='e.g. "Why is FOODS_3 spiking this week?" or "Which category has the most downward pressure?"',
+    key="qa_input",
+)
+if st.button("Ask", key="qa_submit") and question.strip():
+    model_path = DATA_DIR / f"model_{store_id}.pkl"
+    if not model_path.exists():
+        st.error("Generate a briefing first so the model is loaded.")
+    else:
+        try:
+            with st.spinner("Thinking..."):
+                answer = answer_question(
+                    question=question.strip(),
+                    store_id=store_id,
+                    date=str(date),
+                    data_dir=DATA_DIR,
+                    vector_store_dir=VECTOR_DIR,
+                )
+            st.markdown(f"**Answer:** {answer}")
+        except Exception as exc:  # noqa: BLE001
+            st.error(f"Q&A failed: {exc}")
