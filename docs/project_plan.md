@@ -75,26 +75,37 @@
 ## Week 3 — Polish & Rehearse
 > **Goal:** A rehearsed, confident pitch with a live demo that works every time. No surprises on presentation day.
 
-| Owner | Task | Description |
-|-------|------|-------------|
-| 🟢 Tech | Demo scenario | Lock the live walkthrough: "Store #7, Monday morning. 3 markdown recs, 1 promo alert. Accept one — show margin impact + audit trail." |
-| 🟢 Tech | Hallucination guard | ✅ Implement output verification: LLM claim vs database cross-check. Show it catching a discrepancy in the demo. |
-| 🟢 Tech | Confidence display | ✅ High / Medium / Low badge on every card derived from delta_pct. Green / amber / red with exact delta shown. |
-| 🟢 Tech | Ask Your Data | ✅ Natural language Q&A over store data. Claude answers grounded in live forecast + RAG context. |
-| ⚪ Whole team | Finalize pitch deck | Full design pass on slides. Tight narrative, no walls of text. Investor pitch tone — every slide earns its place. |
-| ⚪ Whole team | GenAI transparency log | Every team member logs their own AI-assisted sessions as they happen. Marie compiles the final appendix. Required for Deliverable 1 - the LLM judge checks for completeness. |
-| 🟠 Presentation | Dry runs | At least 2 full run-throughs with the live demo. Time it. Practice the "what's your moat?" and "why not OpenAI?" questions. |
-| 🟠 Presentation | Q&A prep | Prepare answers: hallucination risk, data privacy, forecasting accuracy claims, GTM first customer, pricing justification. |
+| Owner | Task | Status | Description |
+|-------|------|--------|-------------|
+| 🟢 Tech | Hallucination guard | ✅ Done | Intent check (54 phrases) + numeric check (cited % vs actual delta). Visible on every card. |
+| 🟢 Tech | Confidence display | ✅ Done | High / Medium / Low badge on every card derived from delta_pct. |
+| 🟢 Tech | Ask Your Data | ✅ Done | Natural language Q&A grounded in live forecast + RAG context. |
+| 🟢 Tech | Deploy to live URL | ❌ Open | Push to Streamlit Cloud, confirm live URL works, add ANTHROPIC_API_KEY to secrets UI. Biggest remaining blocker. |
+| 🟢 Tech | Lock demo scenario | ❌ Open | Pick store (CA_1 recommended), pick date, run once, screenshot the output. Script: generate briefing → review confidence badges + guard checks → accept one → ask a question. |
+| 🟢 Tech | UI polish | ❌ Open | Check app looks professional on a large screen. Font sizes, spacing, card layout. This is a demo to investors - it must not look like a student project. |
+| 🟢 Tech | Model improvement | Optional | WRMSSE currently 0.74 - goal was <0.60. Tune num_leaves, add more lag windows. Only attempt if deployment is confirmed stable. |
+| 🔵 Business | Business plan - unit economics | ❌ Open | Tech notes already in outline.md with exact numbers. Alex to write up the full section - no TBDs allowed at submission. |
+| 🔵 Business | Business plan - moat & safety | ❌ Open | Tech notes already in outline.md with 4 moat arguments and guard specifics. Alex to write up. |
+| 🔵 Business | ROI numbers + competitor research | ❌ Open | 0.5% margin improvement story needs real comparable numbers. Research 1-2 competitors (Relex, Blue Yonder) for the "why not them" answer. |
+| 🟠 Presentation | Pitch deck design | ❌ Open | Marie owns. Slide order: problem → solution → demo → tech stack → business model → moat → ask. Investor pitch tone, no walls of text. |
+| 🟠 Presentation | Demo script | ❌ Open | Marie owns. Write exact words for each section. Lock which team member says what. |
+| ⚪ Whole team | GenAI transparency log | ❌ Ongoing | Everyone logs own sessions. Marie compiles final appendix. LLM judge checks for completeness - no back-filling. |
+| ⚪ Whole team | Finalize pitch deck | ❌ Open | Full design pass. Every slide earns its place. |
+| 🟠 Presentation | Dry runs | ❌ Open | At least 2 full run-throughs with the live demo cold (fresh browser, no cached state). Time it. |
+| 🟠 Presentation | Q&A prep | ❌ Open | Practice answers to: what's your moat, why not OpenAI, hallucination risk, data privacy, forecasting accuracy, GTM first customer. |
 
 ### Presentation day checklist
-- [ ] Demo works on presentation laptop
+- [ ] Demo works on presentation laptop (cold start, fresh browser)
 - [ ] Backup video recorded
 - [ ] Live URL confirmed up
-- [ ] GenAI log finalized
-- [ ] All Q&A answers practiced
-- [ ] Pitch timed at 10–12 min
+- [ ] GenAI log finalized and complete for all 4 members
+- [ ] Business plan TBDs all filled - no placeholders at submission
+- [ ] All Q&A answers practiced out loud
+- [ ] Pitch timed at 10-12 min
 - [ ] Everyone knows their section
 - [x] Hallucination guard demo ready
+- [x] Confidence display live
+- [x] Ask Your Data live
 
 > ⚠️ **Risk:** After Day 17 the answer to "should we add X?" is always **no**. A stable demo beats a feature-rich broken one every time.
 
@@ -105,7 +116,7 @@
 | Question | Answer |
 |----------|--------|
 | Why can't OpenAI just build this? | Requires POS integration, retail-specific forecasting stack, and a decision log that compounds — none of which OpenAI will build as a general feature. |
-| How do you handle hallucinations? | Output verification layer: every numeric LLM claim cross-checked against source data before display. Mismatches are suppressed. |
-| What's your forecasting accuracy? | M5 benchmark, top 10% leaderboard is the target. LightGBM baseline is the starting point. |
+| How do you handle hallucinations? | Two-layer guard on every LLM output: intent check (54 retail action phrases detect contradictions with forecast direction) + numeric check (cited % vs actual delta_pct, 2x tolerance). Mismatches are flagged and shown to the manager - transparent, not silently suppressed. |
+| What's your forecasting accuracy? | LightGBM baseline achieves WRMSSE 0.74 on M5 holdout across CA_1, CA_2, TX_1. Top 10% on M5 leaderboard is ~0.50 - room to improve with further tuning. |
 | How do you get your first customer? | Direct outreach to regional chains, or partnership with an ERP vendor as a distribution channel. |
 | What's the data privacy story? | Tenant isolation (Chain A never sees Chain B data), GDPR compliance, on-premise deployment option. |
