@@ -50,8 +50,9 @@ def forecast_store(
     item with columns: id, item_id, dept_id, cat_id, predicted, baseline, delta_pct,
     direction.
     """
-    df = features_df[features_df["day_num"] <= features_df["day_num"].max()].copy()
-    # Pick latest row per id (one forecast per SKU).
+    # M5 data ends at day 1941. For dates beyond the dataset range we use the
+    # last available day, which is intentional for demo purposes.
+    df = features_df.copy()
     latest = df.sort_values("day_num").groupby("id", as_index=False).tail(1).reset_index(drop=True)
 
     X = latest[FEATURE_COLS].to_numpy()
