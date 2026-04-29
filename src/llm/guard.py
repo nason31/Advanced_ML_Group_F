@@ -19,9 +19,9 @@ RESTOCK_PHRASES = [
 
 PROMOTE_PHRASES = [
     "promote", "promotion", "end-cap", "end cap", "flyer", "bogo",
-    "feature", "advertise", "marketing push", "highlight", "showcase",
-    "weekly ad", "in-store display", "front of store", "drive awareness",
-    "campaign", "boost visibility", "amplify", "capitalize",
+    "feature placement", "feature in flyer", "advertise", "marketing push",
+    "highlight", "showcase", "weekly ad", "in-store display", "front of store",
+    "drive awareness", "campaign", "boost visibility", "amplify", "capitalize",
 ]
 
 
