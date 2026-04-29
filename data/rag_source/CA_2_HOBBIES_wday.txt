@@ -1,0 +1,1 @@
+In CA_2, HOBBIES sales peak on Saturday at 0.80 units/day (trough 0.51, weekly spread +57.1%). Use this to time weekly promotions and replenishment windows.

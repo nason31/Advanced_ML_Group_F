@@ -4,7 +4,12 @@ from src.recommendations.engine import Rec
 
 def render_card(rec: Rec, index: int) -> str | None:
     """Render a single recommendation card. Returns 'accept', 'reject', or None."""
-    color = "#ffe4e4" if rec.flagged else "#f0f4ff"
+    if rec.flagged:
+        color = "#ffe4e4"  # red tint - guard triggered
+    elif rec.rec_type == "promote":
+        color = "#e6f4ea"  # green tint - strong momentum
+    else:
+        color = "#f0f4ff"  # blue tint - markdown / restock
     with st.container():
         st.markdown(
             f"<div style='background:{color};padding:12px;border-radius:8px;margin-bottom:8px;'>",
@@ -13,6 +18,9 @@ def render_card(rec: Rec, index: int) -> str | None:
         st.markdown(f"**[{rec.rec_type.upper()}]** {rec.text}")
         if rec.flagged:
             st.warning(f"Guard flagged: {rec.flag_reason}")
+        with st.expander("Guard checks", expanded=rec.flagged):
+            st.caption(f"Intent:  {rec.intent_check or 'SKIP'}")
+            st.caption(f"Numerics: {rec.numeric_check or 'SKIP'}")
         col1, col2 = st.columns(2)
         accepted = col1.button("Accept", key=f"accept_{index}")
         rejected = col2.button("Reject", key=f"reject_{index}")

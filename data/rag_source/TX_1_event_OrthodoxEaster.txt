@@ -1,0 +1,1 @@
+In TX_1, OrthodoxEaster produces average sales of 1.23 units/day (+28.4% vs the 0.96 all-day baseline, n=15245 item-day observations). Factor this event when it falls within the forecast horizon.

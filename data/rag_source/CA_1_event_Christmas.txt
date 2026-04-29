@@ -1,0 +1,1 @@
+In CA_1, Christmas produces average sales of 0.00 units/day (-100.0% vs the 1.32 all-day baseline, n=15245 item-day observations). Factor this event when it falls within the forecast horizon.
