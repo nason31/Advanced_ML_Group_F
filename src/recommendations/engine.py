@@ -41,15 +41,14 @@ def run_pipeline(
     date: str,
     data_dir: Path,
     vector_store_dir: Path,
-    top_k: int = 3,
 ) -> list[Rec]:
     """Orchestrate forecast -> summarize -> RAG -> LLM -> guard -> Rec list.
 
-    Layers are already implemented independently; this function simply wires
-    them together in sequence and emits one Rec per top-K SKU.
+    Selects up to 3 candidates per bucket (PROMOTE / RESTOCK / MARKDOWN),
+    runs each through RAG + LLM + guard, and returns the full Rec list.
     """
     forecast_df = forecast_with_names(store_id, date, data_dir)
-    summary_text, rec_seeds = summarize_forecast(forecast_df, top_k=top_k)
+    summary_text, rec_seeds = summarize_forecast(forecast_df)
 
     recs: list[Rec] = []
     for seed in rec_seeds:
