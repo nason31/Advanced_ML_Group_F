@@ -43,9 +43,9 @@ with st.sidebar:
     }
     store_label = st.selectbox("Store", list(_STORE_OPTIONS.keys()))
     store_id = _STORE_OPTIONS[store_label]
-    date = st.date_input("Date", value=datetime.today())
+    date = datetime.today().strftime("%Y-%m-%d")
 
-    if st.button("Generate Briefing", use_container_width=True, type="primary"):
+    if st.button("Generate Today's Briefing", use_container_width=True, type="primary"):
         model_path = DATA_DIR / f"model_{store_id}.pkl"
         if not model_path.exists():
             st.error("No trained model found. Run `python scripts/train_forecast.py` first.")
@@ -105,7 +105,7 @@ recs = st.session_state.get("recs", [])
 if not recs:
     st.info("Select a store and date, then click Generate Briefing.")
 else:
-    st.subheader(f"{store_id} - {date}")
+    st.subheader(f"{store_label.split(' - ')[1]}  |  {datetime.today().strftime('%A, %B %d %Y')}")
     actions = render_table(recs)
     for idx, action in actions:
         rec = recs[idx]
