@@ -1,3 +1,5 @@
+import re
+
 import streamlit as st
 from src.recommendations.engine import Rec
 
@@ -7,43 +9,72 @@ _CONFIDENCE_STYLE = {
     "Low":    ("🔴", "#9b1c1c"),
 }
 
+_TYPE_STYLE = {
+    "promote":  ("#dcfce7", "#166534", "PROMOTE"),
+    "restock":  ("#dbeafe", "#1e40af", "RESTOCK"),
+    "markdown": ("#fef9c3", "#854d0e", "MARKDOWN"),
+}
 
-def render_card(rec: Rec, index: int) -> str | None:
-    """Render a single recommendation card. Returns 'accept', 'reject', or None."""
-    if rec.flagged:
-        color = "#ffe4e4"  # red tint - guard triggered
-    elif rec.rec_type == "promote":
-        color = "#e6f4ea"  # green tint - strong momentum
-    else:
-        color = "#f0f4ff"  # blue tint - markdown / restock
 
-    icon, conf_color = _CONFIDENCE_STYLE.get(rec.confidence, ("⚪", "#666"))
+def _extract_sku(text: str) -> str:
+    match = re.search(r"[A-Z]+_\d+_\d+", text)
+    return match.group(0) if match else "-"
 
-    with st.container():
-        st.markdown(
-            f"<div style='background:{color};padding:12px;border-radius:8px;margin-bottom:8px;'>",
+
+def _clean_text(text: str) -> str:
+    """Strip leading markdown headers and type-prefix boilerplate from LLM output."""
+    lines = text.strip().split("\n")
+    cleaned = []
+    for line in lines:
+        line = re.sub(r"^#+\s*", "", line)
+        cleaned.append(line)
+    return "\n".join(cleaned).strip()
+
+
+def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
+    """Render all recs as a compact scannable table. Returns list of (index, action) tuples."""
+    actions: list[tuple[int, str]] = []
+
+    # Table header
+    h = st.columns([0.9, 1.4, 1.1, 0.8, 0.7, 0.7])
+    for col, label in zip(h, ["Type", "SKU", "Confidence", "Delta", "", ""]):
+        col.markdown(f"<span style='font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.05em;'>{label}</span>", unsafe_allow_html=True)
+    st.markdown("<hr style='margin:4px 0 8px 0;border-color:#e5e7eb;'>", unsafe_allow_html=True)
+
+    for i, rec in enumerate(recs):
+        sku = _extract_sku(rec.text)
+        icon, _ = _CONFIDENCE_STYLE.get(rec.confidence, ("⚪", "#666"))
+        bg, fg, label = _TYPE_STYLE.get(rec.rec_type, ("#f3f4f6", "#374151", rec.rec_type.upper()))
+        guard_badge = "🚨 Flagged" if rec.flagged else "✅ Pass"
+
+        cols = st.columns([0.9, 1.4, 1.1, 0.8, 0.7, 0.7])
+
+        cols[0].markdown(
+            f"<span style='background:{bg};color:{fg};padding:2px 8px;border-radius:4px;"
+            f"font-size:0.78em;font-weight:700;white-space:nowrap;'>{label}</span>",
             unsafe_allow_html=True,
         )
-        col_title, col_conf = st.columns([4, 1])
-        col_title.markdown(f"**[{rec.rec_type.upper()}]** {rec.text}")
-        col_conf.markdown(
-            f"<div style='text-align:right;color:{conf_color};font-weight:600;'>"
-            f"{icon} {rec.confidence} confidence<br>"
-            f"<span style='font-size:0.8em;font-weight:400;'>delta {rec.delta_pct:+.1f}%</span>"
-            f"</div>",
+        cols[1].markdown(f"`{sku}`")
+        cols[2].markdown(f"{icon} **{rec.confidence}**")
+        cols[3].markdown(
+            f"<span style='font-weight:700;color:{'#166534' if rec.delta_pct > 0 else '#9b1c1c'};'>"
+            f"{rec.delta_pct:+.1f}%</span>",
             unsafe_allow_html=True,
         )
-        if rec.flagged:
-            st.warning(f"Guard flagged: {rec.flag_reason}")
-        with st.expander("Guard checks", expanded=rec.flagged):
-            st.caption(f"Intent:   {rec.intent_check or 'SKIP'}")
-            st.caption(f"Numerics: {rec.numeric_check or 'SKIP'}")
-        col1, col2 = st.columns(2)
-        accepted = col1.button("Accept", key=f"accept_{index}")
-        rejected = col2.button("Reject", key=f"reject_{index}")
-        st.markdown("</div>", unsafe_allow_html=True)
-    if accepted:
-        return "accept"
-    if rejected:
-        return "reject"
-    return None
+        if cols[4].button("Accept", key=f"accept_{i}", type="primary", use_container_width=True):
+            actions.append((i, "accept"))
+        if cols[5].button("Reject", key=f"reject_{i}", use_container_width=True):
+            actions.append((i, "reject"))
+
+        with st.expander(f"Details - {sku} ({label})", expanded=False):
+            if rec.flagged:
+                st.warning(f"Guard flagged: {rec.flag_reason}")
+            st.markdown(_clean_text(rec.text))
+            st.divider()
+            dcol1, dcol2 = st.columns(2)
+            dcol1.caption(f"**Intent check:** {rec.intent_check or 'n/a'}")
+            dcol2.caption(f"**Numeric check:** {rec.numeric_check or 'n/a'}")
+
+        st.markdown("<hr style='margin:6px 0;border-color:#f3f4f6;'>", unsafe_allow_html=True)
+
+    return actions
