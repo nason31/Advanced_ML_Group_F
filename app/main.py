@@ -36,7 +36,13 @@ with st.sidebar:
     )
     st.divider()
 
-    store_id = st.selectbox("Store", ["CA_1", "CA_2", "TX_1"])
+    _STORE_OPTIONS = {
+        "CA_1 - California (Store 1)": "CA_1",
+        "CA_2 - California (Store 2)": "CA_2",
+        "TX_1 - Texas (Store 1)":      "TX_1",
+    }
+    store_label = st.selectbox("Store", list(_STORE_OPTIONS.keys()))
+    store_id = _STORE_OPTIONS[store_label]
     date = st.date_input("Date", value=datetime.today())
 
     if st.button("Generate Briefing", use_container_width=True, type="primary"):

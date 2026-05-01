@@ -36,6 +36,21 @@ def _load_idmap(store_id: str, data_dir: Path) -> pd.DataFrame:
     return pd.read_parquet(Path(data_dir) / f"idmap_{store_id}.parquet")
 
 
+def _date_to_day_num(date_str: str, min_day: int, max_day: int) -> int:
+    """Map any calendar date into the available M5 day_num window.
+
+    M5 data covers a fixed historical range; any user-selected date is mapped
+    cyclically into that window so different dates produce different forecasts.
+    """
+    from datetime import date as _date
+    try:
+        d = _date.fromisoformat(str(date_str))
+    except ValueError:
+        return max_day
+    span = max_day - min_day + 1
+    return min_day + (d.toordinal() % span)
+
+
 def forecast_store(
     model: lgb.Booster,
     features_df: pd.DataFrame,
@@ -45,15 +60,20 @@ def forecast_store(
 ) -> pd.DataFrame:
     """Predict next-period sales for every SKU in ``store_id``.
 
-    Picks the most recent feature row per id at or before ``date``; if ``date`` falls
-    past the M5 data range, silently uses the last available day. Returns one row per
-    item with columns: id, item_id, dept_id, cat_id, predicted, baseline, delta_pct,
-    direction.
+    Maps the requested date into the available M5 day_num window, then picks
+    the most recent feature row per item at or before that day. Returns one row
+    per item with columns: id, item_id, dept_id, cat_id, predicted, baseline,
+    delta_pct, direction.
     """
-    # M5 data ends at day 1941. For dates beyond the dataset range we use the
-    # last available day, which is intentional for demo purposes.
     df = features_df.copy()
-    latest = df.sort_values("day_num").groupby("id", as_index=False).tail(1).reset_index(drop=True)
+    min_day = int(df["day_num"].min())
+    max_day = int(df["day_num"].max())
+    target_day = _date_to_day_num(date, min_day, max_day)
+
+    df_window = df[df["day_num"] <= target_day]
+    if df_window.empty:
+        df_window = df
+    latest = df_window.sort_values("day_num").groupby("id", as_index=False).tail(1).reset_index(drop=True)
 
     X = latest[FEATURE_COLS].to_numpy()
     latest["predicted"] = model.predict(X)
