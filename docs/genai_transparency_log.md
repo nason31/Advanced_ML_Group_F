@@ -29,6 +29,32 @@ Human Review: [what you changed, verified, or rejected]
 
 <!-- Append new entries at the TOP (newest-first order). -->
 
+Date: 2026-05-06
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Team role label cleanup across all project docs - renaming Marie's track from "Float" to "Product" and fixing inconsistencies in CLAUDE.md, docs/project_plan.md, and docs/genai_transparency_log.md.
+AI Contribution: Claude identified all files where the team role table or badge labels appeared (CLAUDE.md, project_plan.md, genai_transparency_log.md, README.md), flagged the three inconsistencies (Float vs Presentation vs no label), and executed the fixes across 1 commit (44b7267):
+  (1) CLAUDE.md - changed Marie's track from "Float" to "Product".
+  (2) docs/project_plan.md - updated the legend badge and all 4 task-table rows from "🟠 Presentation" to "🟠 Product".
+  (3) docs/genai_transparency_log.md - replaced the "Who needs to log" table with a bullet list; named [Teammate 3] as Alex and [Teammate 4] as Marie; corrected Marie's track to "Product".
+Human Review: Confirmed "Product" is the correct track label per team alignment. Verified the vector store binary changes were excluded from the commit (runtime artefacts from the running app, not source changes). Reviewed all three diffs before approving the commit.
+
+---
+
+Date: 2026-05-01
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: UI overhaul session - rebuilt the recommendations view as a sortable table, added a sidebar chat panel, wired dotenv support, improved data presentation (product names, store labels, date variation), replaced the date picker with a "Generate Today's Briefing" button, and tightened the 3-bucket selection logic.
+AI Contribution: Claude implemented changes across 5 commits on main (+changes across app/main.py, src/recommendations/engine.py, src/recommendations/summarize.py, and supporting files):
+  (1) 852824b feat(ui): table view for recommendations, sidebar chat, dotenv support - replaced the card stack with a sortable st.dataframe table for all recommendations; added a sidebar chat panel stub for the Ask Your Data flow; added python-dotenv loading so the app picks up .env locally without manual export.
+  (2) 535be68 feat(ui+data): product names column, date variation, friendlier store labels - added a human-readable product name column to the recommendations table by joining the M5 item lookup; introduced date variation in the generated data so each run does not show identical dates; renamed raw store IDs (CA_1, TX_1) to friendlier labels (California Store 1, Texas Store 1) throughout the UI.
+  (3) 6d9718b feat(ui): replace date picker with Generate Today's Briefing button - removed the st.date_input widget and replaced it with a single prominent button that always runs for today's date, simplifying the UX for a demo context where date navigation is a distraction.
+  (4) c08e7df feat(recommendations): 3-bucket selection logic (PROMOTE / RESTOCK / MARKDOWN) - tightened the bucket assignment in engine.py so PROMOTE, RESTOCK, and MARKDOWN are selected based on explicit delta_pct thresholds rather than a single catch-all else branch; ensures the three buckets are always represented in the briefing output.
+  (5) 97378af docs(genai-log): expand header with per-member logging table and rule - added the per-member logging responsibility table and the mandatory logging rule to the genai_transparency_log.md header so all teammates know what to log.
+Human Review: Confirmed the table view is cleaner for the demo than individual cards - easier for a non-technical audience to scan. Verified the friendlier store labels map correctly to the underlying M5 store IDs. Set the 3-bucket thresholds based on the same delta_pct logic established in the Apr 29 session (>+15% = PROMOTE, negative = MARKDOWN, else RESTOCK). Confirmed the "Generate Today's Briefing" button simplification is appropriate for a demo context and does not remove any underlying forecast capability.
+
+---
+
 Date: 2026-04-29
 Team Member: Leticia
 Tool Used: Claude Code (claude-sonnet-4-6)
