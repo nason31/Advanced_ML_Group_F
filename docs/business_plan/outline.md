@@ -25,14 +25,17 @@ Merchandising managers at mid-market grocery/retail chains (50–500 stores).
 
 ## 6. Unit Economics
 [TBD: CAC, LTV, gross margin]
-- **Tech note (token costs - use these numbers):**
-  - Model: claude-sonnet-4-6
-  - Tokens per recommendation call: ~1500 in / ~300 out
-  - Cost per rec at current Anthropic pricing: ~€0.003
-  - 3 recs + 1 Q&A per store per day: ~€0.012/store/day → ~€0.36/store/month
-  - Hosting: Streamlit Cloud free tier covers up to ~3 concurrent users. Paid tier ~$25/month covers demo scale.
+- **Tech note (token costs - verified from live code, use these numbers):**
+  - Model: claude-sonnet-4-6 ($3.00/MTok input, $15.00/MTok output)
+  - One briefing = up to 9 Claude API calls (3 buckets x 3 recommendations, one LLM call per rec)
+  - Tokens per call: ~700 input (system prompt + forecast summary + 3 RAG docs + focus line) + ~200 output
+  - Full briefing tokens: ~6,300 input + ~1,800 output
+  - **Cost per briefing: ~$0.046 (~€0.043) at current Anthropic pricing**
+  - Cost per store per year (365 briefings): ~$16.80 (~€15.60)
+  - **Prompt caching opportunity (not yet implemented):** the system prompt is identical on every call. Enabling Anthropic prompt caching cuts cached input cost by ~90%, dropping briefing cost to ~$0.025. Flag as a planned optimisation that improves margin at scale.
+  - Hosting: Streamlit Cloud free tier covers demo scale. Paid tier ~$25/month for production.
   - Vector DB: ChromaDB on local disk, $0 at current scale. Cloud (Pinecone/Weaviate) ~$25/month for 1M vectors.
-  - At €300/store/month SaaS price and €0.50 total infra cost/store/month: **gross margin ~99.8%** at launch, degrades gracefully as usage scales.
+  - At €300/store/month SaaS price and ~€1.50 total infra cost/store/month: **gross margin ~99.5%** at launch.
   - **Flag for business track:** these are the numbers to put in the LTV/CAC model. Do not use TBD at submission - the LLM judge will check.
 
 ## 7. Moat
