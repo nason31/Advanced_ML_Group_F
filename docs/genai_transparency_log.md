@@ -5,12 +5,10 @@
 
 ## Who needs to log
 
-| Team member | Owns | Must log |
-|-------------|------|----------|
-| Leticia | Tech - LLM layer, frontend, features | Every coding session using Claude Code or claude.ai |
-| Justus | Tech - forecasting, RAG, deployment | Every coding session using Claude Code or claude.ai |
-| [Teammate 3] | Business - business plan, pitch deck | Every writing session where AI helped draft or edit |
-| [Teammate 4] | Float - demo script, presentation | Every session where AI helped with slides, script, or Q&A prep |
+- **Leticia** (Tech - LLM layer, frontend, features): every coding session using Claude Code or claude.ai
+- **Justus** (Tech - forecasting, RAG, deployment): every coding session using Claude Code or claude.ai
+- **Alex** (Business - business plan, pitch deck): every writing session where AI helped draft or edit
+- **Marie** (Product - demo script, presentation): every session where AI helped with slides, script, or Q&A prep
 
 **Rule:** If you used an AI tool and it influenced the output - code, writing, design, analysis - it needs an entry. When in doubt, log it.
 

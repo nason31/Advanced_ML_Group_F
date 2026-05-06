@@ -15,7 +15,7 @@
 |-------|------|
 | 🔵 Business | Alex |
 | 🟢 Tech | Leticia, Justus |
-| 🟠 Presentation | Marie |
+| 🟠 Product | Marie |
 | ⚪ Whole team | Leticia, Justus, Alex, Marie |
 
 ---
@@ -87,12 +87,12 @@
 | 🔵 Business | Business plan - unit economics | ❌ Open | Tech notes already in outline.md with exact numbers. Alex to write up the full section - no TBDs allowed at submission. |
 | 🔵 Business | Business plan - moat & safety | ❌ Open | Tech notes already in outline.md with 4 moat arguments and guard specifics. Alex to write up. |
 | 🔵 Business | ROI numbers + competitor research | ❌ Open | 0.5% margin improvement story needs real comparable numbers. Research 1-2 competitors (Relex, Blue Yonder) for the "why not them" answer. |
-| 🟠 Presentation | Pitch deck design | ❌ Open | Marie owns. Slide order: problem → solution → demo → tech stack → business model → moat → ask. Investor pitch tone, no walls of text. |
-| 🟠 Presentation | Demo script | ❌ Open | Marie owns. Write exact words for each section. Lock which team member says what. |
+| 🟠 Product | Pitch deck design | ❌ Open | Marie owns. Slide order: problem → solution → demo → tech stack → business model → moat → ask. Investor pitch tone, no walls of text. |
+| 🟠 Product | Demo script | ❌ Open | Marie owns. Write exact words for each section. Lock which team member says what. |
 | ⚪ Whole team | GenAI transparency log | ❌ Ongoing | Everyone logs own sessions. Marie compiles final appendix. LLM judge checks for completeness - no back-filling. |
 | ⚪ Whole team | Finalize pitch deck | ❌ Open | Full design pass. Every slide earns its place. |
-| 🟠 Presentation | Dry runs | ❌ Open | At least 2 full run-throughs with the live demo cold (fresh browser, no cached state). Time it. |
-| 🟠 Presentation | Q&A prep | ❌ Open | Practice answers to: what's your moat, why not OpenAI, hallucination risk, data privacy, forecasting accuracy, GTM first customer. |
+| 🟠 Product | Dry runs | ❌ Open | At least 2 full run-throughs with the live demo cold (fresh browser, no cached state). Time it. |
+| 🟠 Product | Q&A prep | ❌ Open | Practice answers to: what's your moat, why not OpenAI, hallucination risk, data privacy, forecasting accuracy, GTM first customer. |
 
 ### Presentation day checklist
 - [ ] Demo works on presentation laptop (cold start, fresh browser)
