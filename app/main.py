@@ -10,7 +10,8 @@ load_dotenv()
 import streamlit as st
 
 from app.components.audit_trail import render_audit
-from app.components.briefing_card import render_table
+from app.components.briefing_card import render_table, _extract_sku
+from src.data.product_names import get_dept_name, get_product_name
 from src.llm.qa import answer_question
 from src.recommendations.engine import run_pipeline
 
@@ -70,7 +71,7 @@ with st.sidebar:
 
     # ── Chat assistant ─────────────────────────────────────────────────────────
     st.markdown("#### Ask Your Data")
-    st.caption("Grounded in forecast data and historical context.")
+    st.caption("Ask about any product above - why it's moving, whether to act, what's driving it.")
 
     for turn in st.session_state.chat_history:
         with st.chat_message("user"):
@@ -78,7 +79,7 @@ with st.sidebar:
         with st.chat_message("assistant"):
             st.write(turn["answer"])
 
-    question = st.chat_input("e.g. Why is FOODS_3 spiking?")
+    question = st.chat_input("e.g. Why is Maple Syrup selling so much?")
     if question:
         model_path = DATA_DIR / f"model_{store_id}.pkl"
         if not model_path.exists():
@@ -86,12 +87,18 @@ with st.sidebar:
         else:
             try:
                 with st.spinner("Thinking..."):
+                    current_recs = st.session_state.get("recs", [])
+                    active_products = {
+                        f"{get_product_name(_extract_sku(rec.text))} ({get_dept_name(_extract_sku(rec.text))})": _extract_sku(rec.text)
+                        for rec in current_recs
+                    }
                     answer = answer_question(
                         question=question.strip(),
                         store_id=store_id,
                         date=str(date),
                         data_dir=DATA_DIR,
                         vector_store_dir=VECTOR_DIR,
+                        active_products=active_products or None,
                     )
                 st.session_state.chat_history.append({"question": question, "answer": answer})
                 st.rerun()

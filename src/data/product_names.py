@@ -97,6 +97,26 @@ _FALLBACK: dict[str, list[str]] = {
 }
 
 
+_DEPT_NAMES: dict[str, str] = {
+    "FOODS_1":     "Pantry & Canned Goods",
+    "FOODS_2":     "Dairy & Refrigerated",
+    "FOODS_3":     "Snacks & Beverages",
+    "HOBBIES_1":   "Arts & Crafts",
+    "HOBBIES_2":   "Games & Puzzles",
+    "HOUSEHOLD_1": "Cleaning Supplies",
+    "HOUSEHOLD_2": "Kitchen & Storage",
+}
+
+
+def get_dept_name(sku: str) -> str:
+    """Return a human-readable department name for a M5 SKU code."""
+    parts = sku.split("_")
+    if len(parts) >= 2:
+        key = f"{parts[0]}_{parts[1]}"
+        return _DEPT_NAMES.get(key, key)
+    return sku
+
+
 def get_product_name(sku: str) -> str:
     """Return a plausible product name for a M5 SKU code.
 

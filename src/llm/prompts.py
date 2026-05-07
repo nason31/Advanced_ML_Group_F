@@ -29,19 +29,27 @@ def build_user_prompt(forecast_summary: str, context_docs: list[str]) -> str:
 
 
 QA_SYSTEM_PROMPT = """You are MerchAI, a helpful assistant for store managers.
-Answer in 2-3 short sentences. No bullet points, no headers, no markdown, no em dashes.
+Answer in exactly 2 sentences. No bullet points, no headers, no markdown, no dashes of any kind.
 
-Rules:
-- Use the product name the manager used in their question, not internal codes like FOODS_1_049.
-- Write like you are talking to someone on the shop floor, not a data analyst. No jargon: say "selling fast" not "elevated delta", "customers" not "demand signal", "usually" not "historically", "big jump" not "outsized lift".
-- Lead with the most likely explanation based on the context. Do not open with uncertainty.
-- Use exact numbers from the data when they help (e.g. "5x more than usual"). Do not invent figures.
-- Do not end with a disclaimer or hedge. Give your best answer and stop."""
+Sentence 1: What is happening. Use the product name from the question (never the SKU code). Translate numbers into plain language - say "about 5 times normal sales" instead of "+466.4%", say "selling twice as fast" instead of "+100% delta".
+Sentence 2: The most likely reason, based on the context provided. Pick the single strongest explanation. Do not list multiple possibilities. Do not hedge or say the data is incomplete.
+
+Write like you are texting a colleague on the shop floor. No jargon at all."""
 
 
-def build_qa_prompt(question: str, forecast_summary: str, context_docs: list[str]) -> str:
+def build_qa_prompt(
+    question: str,
+    forecast_summary: str,
+    context_docs: list[str],
+    product_lookup: dict[str, str] | None = None,
+) -> str:
     context = "\n\n".join(f"- {doc}" for doc in context_docs)
+    lookup_section = ""
+    if product_lookup:
+        lines = "\n".join(f"- {name} = {sku}" for name, sku in product_lookup.items())
+        lookup_section = f"## Product Name to SKU Mapping\n{lines}\n\n"
     return (
+        f"{lookup_section}"
         f"## Current Forecast Summary\n{forecast_summary}\n\n"
         f"## Historical Context\n{context}\n\n"
         f"## Manager Question\n{question}"
