@@ -106,13 +106,23 @@ with st.sidebar:
                 st.error(f"Q&A failed: {exc}")
 
 # ── Main area ──────────────────────────────────────────────────────────────────
-st.title("MerchAI - Daily Merchandising Briefing")
+st.markdown(
+    "<span style='font-size:0.85em;font-weight:600;color:#6b7280;text-transform:uppercase;"
+    "letter-spacing:0.08em;'>MerchAI</span>",
+    unsafe_allow_html=True,
+)
 
 recs = st.session_state.get("recs", [])
 if not recs:
-    st.info("Select a store and date, then click Generate Briefing.")
+    st.markdown("## Daily Merchandising Briefing")
+    st.info("Select a store and click Generate Today's Briefing.")
 else:
-    st.subheader(f"{store_label.split(' - ')[1]}  |  {datetime.today().strftime('%A, %B %d %Y')}")
+    st.markdown(
+        f"## {store_label.split(' - ')[1]}"
+        f"<span style='color:#9ca3af;font-weight:400;'>"
+        f"  &nbsp;|&nbsp;  {datetime.today().strftime('%A, %B %d %Y')}</span>",
+        unsafe_allow_html=True,
+    )
     actions = render_table(recs)
     for idx, action in actions:
         rec = recs[idx]

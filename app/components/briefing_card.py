@@ -5,9 +5,9 @@ from src.data.product_names import get_dept_name, get_product_name
 from src.recommendations.engine import Rec
 
 _CONFIDENCE_STYLE = {
-    "High":   ("🟢", "#1a7f3c"),
-    "Medium": ("🟡", "#b45309"),
-    "Low":    ("🔴", "#9b1c1c"),
+    "High":   ("#dcfce7", "#166534"),
+    "Medium": ("#fef9c3", "#854d0e"),
+    "Low":    ("#fee2e2", "#9b1c1c"),
 }
 
 _TYPE_STYLE = {
@@ -37,7 +37,7 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
     actions: list[tuple[int, str]] = []
 
     # Table header
-    h = st.columns([0.8, 1.2, 1.6, 1.2, 1.0, 0.7, 0.6, 0.6])
+    h = st.columns([0.75, 1.05, 1.4, 1.05, 0.85, 0.75, 0.85, 0.85])
     for col, label in zip(h, ["Type", "SKU", "Product", "Department", "Confidence", "Delta", "", ""]):
         col.markdown(f"<span style='font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.05em;'>{label}</span>", unsafe_allow_html=True)
     st.markdown("<hr style='margin:4px 0 8px 0;border-color:#e5e7eb;'>", unsafe_allow_html=True)
@@ -46,10 +46,13 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
         sku = _extract_sku(rec.text)
         product_name = get_product_name(sku)
         dept_name = get_dept_name(sku)
-        icon, _ = _CONFIDENCE_STYLE.get(rec.confidence, ("⚪", "#666"))
+        conf_bg, conf_fg = _CONFIDENCE_STYLE.get(rec.confidence, ("#f3f4f6", "#374151"))
         bg, fg, label = _TYPE_STYLE.get(rec.rec_type, ("#f3f4f6", "#374151", rec.rec_type.upper()))
+        arrow = "↑" if rec.delta_pct > 0 else "↓"
+        delta_color = "#166534" if rec.delta_pct > 0 else "#9b1c1c"
+        delta_bg = "#dcfce7" if rec.delta_pct > 0 else "#fee2e2"
 
-        cols = st.columns([0.8, 1.2, 1.6, 1.2, 1.0, 0.7, 0.6, 0.6])
+        cols = st.columns([0.75, 1.05, 1.4, 1.05, 0.85, 0.75, 0.85, 0.85])
 
         cols[0].markdown(
             f"<span style='background:{bg};color:{fg};padding:2px 8px;border-radius:4px;"
@@ -59,10 +62,15 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
         cols[1].markdown(f"`{sku}`")
         cols[2].markdown(f"{product_name}")
         cols[3].markdown(f"<span style='color:#6b7280;font-size:0.9em;'>{dept_name}</span>", unsafe_allow_html=True)
-        cols[4].markdown(f"{icon} **{rec.confidence}**")
+        cols[4].markdown(
+            f"<span style='background:{conf_bg};color:{conf_fg};padding:2px 8px;border-radius:4px;"
+            f"font-size:0.78em;font-weight:700;white-space:nowrap;'>{rec.confidence}</span>",
+            unsafe_allow_html=True,
+        )
         cols[5].markdown(
-            f"<span style='font-weight:700;color:{'#166534' if rec.delta_pct > 0 else '#9b1c1c'};'>"
-            f"{rec.delta_pct:+.1f}%</span>",
+            f"<span style='background:{delta_bg};color:{delta_color};padding:2px 7px;"
+            f"border-radius:4px;font-size:0.85em;font-weight:700;white-space:nowrap;'>"
+            f"{arrow} {rec.delta_pct:+.1f}%</span>",
             unsafe_allow_html=True,
         )
         if cols[6].button("Accept", key=f"accept_{i}", type="primary", use_container_width=True):
@@ -70,7 +78,7 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
         if cols[7].button("Reject", key=f"reject_{i}", use_container_width=True):
             actions.append((i, "reject"))
 
-        with st.expander(f"Details - {product_name} ({sku})", expanded=False):
+        with st.expander(f"Details - {product_name}", expanded=False):
             if rec.flagged:
                 st.warning(f"Guard flagged: {rec.flag_reason}")
             st.markdown(_clean_text(rec.text))
