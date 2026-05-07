@@ -1,0 +1,1 @@
+In CA_2, LentStart suppresses FOODS category sales by -18.6% vs the 1.28 units/day baseline (n=8622 item-day observations). Factor this when LentStart falls within the forecast horizon.

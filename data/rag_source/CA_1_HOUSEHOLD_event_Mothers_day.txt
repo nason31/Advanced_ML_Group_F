@@ -1,0 +1,1 @@
+In CA_1, Mother's day lifts HOUSEHOLD category sales by +6.3% vs the 0.72 units/day baseline (n=6282 item-day observations). Factor this when Mother's day falls within the forecast horizon.

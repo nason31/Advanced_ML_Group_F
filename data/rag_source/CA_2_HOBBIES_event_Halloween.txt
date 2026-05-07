@@ -1,0 +1,1 @@
+In CA_2, Halloween lifts HOBBIES category sales by +8.9% vs the 0.59 units/day baseline (n=2825 item-day observations). Factor this when Halloween falls within the forecast horizon.

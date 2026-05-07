@@ -1,0 +1,1 @@
+In CA_2, NewYear suppresses HOUSEHOLD category sales by -14.4% vs the 0.79 units/day baseline (n=5235 item-day observations). Factor this when NewYear falls within the forecast horizon.

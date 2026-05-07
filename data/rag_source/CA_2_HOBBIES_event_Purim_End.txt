@@ -1,0 +1,1 @@
+In CA_2, Purim End lifts HOBBIES category sales by +12.3% vs the 0.59 units/day baseline (n=3390 item-day observations). Factor this when Purim End falls within the forecast horizon.

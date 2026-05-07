@@ -1,0 +1,1 @@
+In TX_1, LentWeek2 suppresses HOBBIES category sales by -13.0% vs the 0.40 units/day baseline (n=3390 item-day observations). Factor this when LentWeek2 falls within the forecast horizon.

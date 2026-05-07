@@ -1,0 +1,1 @@
+In CA_1, SuperBowl lifts FOODS category sales by +25.3% vs the 1.96 units/day baseline (n=8622 item-day observations). Factor this when SuperBowl falls within the forecast horizon.

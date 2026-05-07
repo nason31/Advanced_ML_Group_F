@@ -1,0 +1,1 @@
+In CA_2, PresidentsDay lifts HOUSEHOLD category sales by +14.5% vs the 0.79 units/day baseline (n=6282 item-day observations). Factor this when PresidentsDay falls within the forecast horizon.

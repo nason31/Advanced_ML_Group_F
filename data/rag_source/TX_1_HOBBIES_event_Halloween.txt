@@ -1,0 +1,1 @@
+In TX_1, Halloween suppresses HOBBIES category sales by -14.7% vs the 0.40 units/day baseline (n=2825 item-day observations). Factor this when Halloween falls within the forecast horizon.

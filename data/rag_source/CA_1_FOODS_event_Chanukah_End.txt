@@ -1,0 +1,1 @@
+In CA_1, Chanukah End suppresses FOODS category sales by -6.2% vs the 1.96 units/day baseline (n=7185 item-day observations). Factor this when Chanukah End falls within the forecast horizon.

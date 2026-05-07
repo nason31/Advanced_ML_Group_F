@@ -1,0 +1,1 @@
+In CA_1, OrthodoxEaster lifts FOODS category sales by +27.7% vs the 1.96 units/day baseline (n=7185 item-day observations). Factor this when OrthodoxEaster falls within the forecast horizon.

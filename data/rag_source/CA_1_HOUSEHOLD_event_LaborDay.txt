@@ -1,0 +1,1 @@
+In CA_1, LaborDay lifts HOUSEHOLD category sales by +32.9% vs the 0.72 units/day baseline (n=5235 item-day observations). Factor this when LaborDay falls within the forecast horizon.

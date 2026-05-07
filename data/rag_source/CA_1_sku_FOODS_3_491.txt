@@ -1,0 +1,1 @@
+FOODS_3_491 (FOODS, FOODS_3) in CA_1: avg 15.05 units/day. Peak month October, trough May (seasonal spread 68.3%). Sells most on Saturdays. Price sensitivity: a >=10% price cut drives +36.9% weekly sales uplift (n=3 observed weeks).

@@ -1,0 +1,1 @@
+FOODS_3_090 (FOODS, FOODS_3) in TX_1: avg 48.97 units/day. Peak month January, trough June (seasonal spread 72.8%). Sells most on Saturdays. Price sensitivity: a >=10% price cut drives +55.8% weekly sales uplift (n=5 observed weeks).

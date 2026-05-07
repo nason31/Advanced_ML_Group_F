@@ -1,0 +1,1 @@
+FOODS_2_360 (FOODS, FOODS_2) in CA_1: avg 12.91 units/day. Peak month June, trough January (seasonal spread 55.9%). Sells most on Saturdays.

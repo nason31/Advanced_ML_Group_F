@@ -1,0 +1,1 @@
+In TX_1, Thanksgiving suppresses FOODS category sales by -8.0% vs the 1.38 units/day baseline (n=7185 item-day observations). Factor this when Thanksgiving falls within the forecast horizon.

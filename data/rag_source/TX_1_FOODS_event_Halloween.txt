@@ -1,0 +1,1 @@
+In TX_1, Halloween suppresses FOODS category sales by -15.4% vs the 1.38 units/day baseline (n=7185 item-day observations). Factor this when Halloween falls within the forecast horizon.

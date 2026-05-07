@@ -1,0 +1,1 @@
+In CA_1, Thanksgiving suppresses FOODS category sales by -38.3% vs the 1.96 units/day baseline (n=7185 item-day observations). Factor this when Thanksgiving falls within the forecast horizon.

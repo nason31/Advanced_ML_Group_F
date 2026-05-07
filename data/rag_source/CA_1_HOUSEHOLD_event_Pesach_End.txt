@@ -1,0 +1,1 @@
+In CA_1, Pesach End lifts HOUSEHOLD category sales by +9.0% vs the 0.72 units/day baseline (n=6282 item-day observations). Factor this when Pesach End falls within the forecast horizon.

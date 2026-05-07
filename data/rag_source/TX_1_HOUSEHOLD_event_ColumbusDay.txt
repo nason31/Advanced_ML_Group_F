@@ -1,0 +1,1 @@
+In TX_1, ColumbusDay suppresses HOUSEHOLD category sales by -6.8% vs the 0.70 units/day baseline (n=5235 item-day observations). Factor this when ColumbusDay falls within the forecast horizon.

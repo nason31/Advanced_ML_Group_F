@@ -1,0 +1,1 @@
+In TX_1, Father's day lifts HOBBIES category sales by +35.8% vs the 0.40 units/day baseline (n=2260 item-day observations). Factor this when Father's day falls within the forecast horizon.

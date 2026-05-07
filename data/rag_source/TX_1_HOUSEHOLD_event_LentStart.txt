@@ -1,0 +1,1 @@
+In TX_1, LentStart suppresses HOUSEHOLD category sales by -8.4% vs the 0.70 units/day baseline (n=6282 item-day observations). Factor this when LentStart falls within the forecast horizon.

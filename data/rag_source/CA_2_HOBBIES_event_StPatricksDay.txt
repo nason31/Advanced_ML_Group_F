@@ -1,0 +1,1 @@
+In CA_2, StPatricksDay lifts HOBBIES category sales by +19.6% vs the 0.59 units/day baseline (n=3390 item-day observations). Factor this when StPatricksDay falls within the forecast horizon.

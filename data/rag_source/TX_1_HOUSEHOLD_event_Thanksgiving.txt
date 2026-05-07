@@ -1,0 +1,1 @@
+In TX_1, Thanksgiving suppresses HOUSEHOLD category sales by -22.7% vs the 0.70 units/day baseline (n=5235 item-day observations). Factor this when Thanksgiving falls within the forecast horizon.

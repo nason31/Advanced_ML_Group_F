@@ -1,0 +1,1 @@
+In CA_2, ValentinesDay suppresses FOODS category sales by -8.9% vs the 1.28 units/day baseline (n=8622 item-day observations). Factor this when ValentinesDay falls within the forecast horizon.

@@ -1,0 +1,1 @@
+FOODS_3_635 (FOODS, FOODS_3) in CA_2: avg 11.53 units/day. Peak month June, trough November (seasonal spread 123.1%). Sells most on Sundays. Price sensitivity: a >=10% price cut drives -98.2% weekly sales uplift (n=2 observed weeks).

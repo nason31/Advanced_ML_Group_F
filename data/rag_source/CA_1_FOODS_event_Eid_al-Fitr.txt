@@ -1,0 +1,1 @@
+In CA_1, Eid al-Fitr lifts FOODS category sales by +5.2% vs the 1.96 units/day baseline (n=7185 item-day observations). Factor this when Eid al-Fitr falls within the forecast horizon.

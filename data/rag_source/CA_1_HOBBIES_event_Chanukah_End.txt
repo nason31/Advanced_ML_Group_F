@@ -1,0 +1,1 @@
+In CA_1, Chanukah End suppresses HOBBIES category sales by -7.7% vs the 0.81 units/day baseline (n=2825 item-day observations). Factor this when Chanukah End falls within the forecast horizon.

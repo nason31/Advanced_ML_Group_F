@@ -1,0 +1,1 @@
+HOBBIES_1_348 (HOBBIES, HOBBIES_1) in CA_1: avg 11.85 units/day. Peak month July, trough February (seasonal spread 43.4%). Sells most on Saturdays.

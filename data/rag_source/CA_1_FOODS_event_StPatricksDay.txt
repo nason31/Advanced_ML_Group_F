@@ -1,0 +1,1 @@
+In CA_1, StPatricksDay suppresses FOODS category sales by -9.8% vs the 1.96 units/day baseline (n=8622 item-day observations). Factor this when StPatricksDay falls within the forecast horizon.

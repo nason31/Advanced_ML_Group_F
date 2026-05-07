@@ -1,0 +1,1 @@
+In TX_1, IndependenceDay lifts FOODS category sales by +5.6% vs the 1.38 units/day baseline (n=7185 item-day observations). Factor this when IndependenceDay falls within the forecast horizon.

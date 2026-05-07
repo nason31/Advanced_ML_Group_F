@@ -1,0 +1,1 @@
+In CA_2, Mother's day lifts FOODS category sales by +9.7% vs the 1.28 units/day baseline (n=8622 item-day observations). Factor this when Mother's day falls within the forecast horizon.

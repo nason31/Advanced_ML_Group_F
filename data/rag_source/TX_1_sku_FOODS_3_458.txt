@@ -1,0 +1,1 @@
+FOODS_3_458 (FOODS, FOODS_3) in TX_1: avg 8.48 units/day. Peak month October, trough March (seasonal spread 22.8%). Sells most on Saturdays.

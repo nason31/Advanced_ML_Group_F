@@ -1,0 +1,1 @@
+In CA_2, Eid al-Fitr suppresses HOBBIES category sales by -7.8% vs the 0.59 units/day baseline (n=2825 item-day observations). Factor this when Eid al-Fitr falls within the forecast horizon.

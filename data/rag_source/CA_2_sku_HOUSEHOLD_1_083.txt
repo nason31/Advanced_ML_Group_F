@@ -1,0 +1,1 @@
+HOUSEHOLD_1_083 (HOUSEHOLD, HOUSEHOLD_1) in CA_2: avg 6.08 units/day. Peak month October, trough February (seasonal spread 35.4%). Sells most on Saturdays.

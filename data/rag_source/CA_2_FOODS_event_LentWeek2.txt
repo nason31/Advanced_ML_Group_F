@@ -1,0 +1,1 @@
+In CA_2, LentWeek2 suppresses FOODS category sales by -19.1% vs the 1.28 units/day baseline (n=8622 item-day observations). Factor this when LentWeek2 falls within the forecast horizon.

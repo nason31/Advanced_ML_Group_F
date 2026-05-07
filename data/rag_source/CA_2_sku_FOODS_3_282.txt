@@ -1,0 +1,1 @@
+FOODS_3_282 (FOODS, FOODS_3) in CA_2: avg 6.17 units/day. Peak month January, trough May (seasonal spread 137.0%). Sells most on Sundays.

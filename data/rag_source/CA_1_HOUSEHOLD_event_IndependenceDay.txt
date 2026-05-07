@@ -1,0 +1,1 @@
+In CA_1, IndependenceDay suppresses HOUSEHOLD category sales by -16.2% vs the 0.72 units/day baseline (n=5235 item-day observations). Factor this when IndependenceDay falls within the forecast horizon.

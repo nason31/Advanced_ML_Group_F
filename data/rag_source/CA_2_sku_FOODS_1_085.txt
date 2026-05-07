@@ -1,0 +1,1 @@
+FOODS_1_085 (FOODS, FOODS_1) in CA_2: avg 7.95 units/day. Peak month July, trough May (seasonal spread 38.4%). Sells most on Saturdays.

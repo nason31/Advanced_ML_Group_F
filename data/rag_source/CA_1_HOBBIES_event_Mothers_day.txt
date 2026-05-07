@@ -1,0 +1,1 @@
+In CA_1, Mother's day suppresses HOBBIES category sales by -5.2% vs the 0.81 units/day baseline (n=3390 item-day observations). Factor this when Mother's day falls within the forecast horizon.

@@ -1,0 +1,1 @@
+In TX_1, OrthodoxEaster lifts HOUSEHOLD category sales by +30.3% vs the 0.70 units/day baseline (n=5235 item-day observations). Factor this when OrthodoxEaster falls within the forecast horizon.

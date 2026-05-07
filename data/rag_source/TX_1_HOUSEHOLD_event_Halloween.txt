@@ -1,0 +1,1 @@
+In TX_1, Halloween suppresses HOUSEHOLD category sales by -11.0% vs the 0.70 units/day baseline (n=5235 item-day observations). Factor this when Halloween falls within the forecast horizon.

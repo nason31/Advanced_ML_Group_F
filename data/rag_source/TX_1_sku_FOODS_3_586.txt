@@ -1,0 +1,1 @@
+FOODS_3_586 (FOODS, FOODS_3) in TX_1: avg 58.74 units/day. Peak month August, trough January (seasonal spread 52.9%). Sells most on Sundays.

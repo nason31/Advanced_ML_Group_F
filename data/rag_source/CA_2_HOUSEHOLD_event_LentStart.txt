@@ -1,0 +1,1 @@
+In CA_2, LentStart suppresses HOUSEHOLD category sales by -23.7% vs the 0.79 units/day baseline (n=6282 item-day observations). Factor this when LentStart falls within the forecast horizon.

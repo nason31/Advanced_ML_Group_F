@@ -1,0 +1,1 @@
+In CA_1, Easter lifts HOUSEHOLD category sales by +8.5% vs the 0.72 units/day baseline (n=5235 item-day observations). Factor this when Easter falls within the forecast horizon.

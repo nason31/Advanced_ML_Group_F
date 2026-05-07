@@ -1,0 +1,1 @@
+HOUSEHOLD_1_459 (HOUSEHOLD, HOUSEHOLD_1) in CA_2: avg 6.41 units/day. Peak month June, trough January (seasonal spread 93.7%). Sells most on Sundays.

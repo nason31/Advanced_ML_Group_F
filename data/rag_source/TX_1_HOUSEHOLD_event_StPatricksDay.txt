@@ -1,0 +1,1 @@
+In TX_1, StPatricksDay lifts HOUSEHOLD category sales by +8.6% vs the 0.70 units/day baseline (n=6282 item-day observations). Factor this when StPatricksDay falls within the forecast horizon.

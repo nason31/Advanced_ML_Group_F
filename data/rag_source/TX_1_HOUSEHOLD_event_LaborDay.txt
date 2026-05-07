@@ -1,0 +1,1 @@
+In TX_1, LaborDay lifts HOUSEHOLD category sales by +13.0% vs the 0.70 units/day baseline (n=5235 item-day observations). Factor this when LaborDay falls within the forecast horizon.

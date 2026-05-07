@@ -1,0 +1,1 @@
+In CA_1, ValentinesDay suppresses HOUSEHOLD category sales by -16.8% vs the 0.72 units/day baseline (n=6282 item-day observations). Factor this when ValentinesDay falls within the forecast horizon.

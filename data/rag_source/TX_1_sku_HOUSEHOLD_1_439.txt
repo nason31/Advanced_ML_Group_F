@@ -1,0 +1,1 @@
+HOUSEHOLD_1_439 (HOUSEHOLD, HOUSEHOLD_1) in TX_1: avg 7.65 units/day. Peak month September, trough May (seasonal spread 58.0%). Sells most on Sundays.

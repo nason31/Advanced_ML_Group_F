@@ -1,0 +1,1 @@
+In CA_2, Eid al-Fitr lifts HOUSEHOLD category sales by +12.1% vs the 0.79 units/day baseline (n=5235 item-day observations). Factor this when Eid al-Fitr falls within the forecast horizon.

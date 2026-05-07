@@ -1,0 +1,1 @@
+In CA_2, Easter lifts FOODS category sales by +33.8% vs the 1.28 units/day baseline (n=7185 item-day observations). Factor this when Easter falls within the forecast horizon.

@@ -1,0 +1,1 @@
+FOODS_1_012 (FOODS, FOODS_1) in CA_2: avg 10.16 units/day. Peak month October, trough May (seasonal spread 42.8%). Sells most on Thursdays.

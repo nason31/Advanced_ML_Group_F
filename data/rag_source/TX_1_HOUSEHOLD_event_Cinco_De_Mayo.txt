@@ -1,0 +1,1 @@
+In TX_1, Cinco De Mayo suppresses HOUSEHOLD category sales by -9.3% vs the 0.70 units/day baseline (n=5235 item-day observations). Factor this when Cinco De Mayo falls within the forecast horizon.

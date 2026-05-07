@@ -1,0 +1,1 @@
+In TX_1, Pesach End lifts HOUSEHOLD category sales by +11.3% vs the 0.70 units/day baseline (n=6282 item-day observations). Factor this when Pesach End falls within the forecast horizon.

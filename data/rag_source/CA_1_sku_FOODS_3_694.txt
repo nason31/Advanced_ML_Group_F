@@ -1,0 +1,1 @@
+FOODS_3_694 (FOODS, FOODS_3) in CA_1: avg 15.13 units/day. Peak month August, trough January (seasonal spread 38.6%). Sells most on Sundays.

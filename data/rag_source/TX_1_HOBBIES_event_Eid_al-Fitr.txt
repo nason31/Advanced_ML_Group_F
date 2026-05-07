@@ -1,0 +1,1 @@
+In TX_1, Eid al-Fitr lifts HOBBIES category sales by +6.9% vs the 0.40 units/day baseline (n=2825 item-day observations). Factor this when Eid al-Fitr falls within the forecast horizon.

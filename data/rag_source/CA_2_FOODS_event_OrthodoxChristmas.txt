@@ -1,0 +1,1 @@
+In CA_2, OrthodoxChristmas suppresses FOODS category sales by -9.6% vs the 1.28 units/day baseline (n=7185 item-day observations). Factor this when OrthodoxChristmas falls within the forecast horizon.

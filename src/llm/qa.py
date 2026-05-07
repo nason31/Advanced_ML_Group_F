@@ -22,7 +22,17 @@ def answer_question(
     forecast_df = forecast_with_names(store_id, date, data_dir)
     summary_text, _ = summarize_forecast(forecast_df, bucket_size=5)
 
-    context_docs = retrieve(question, vector_store_dir, k=4)
+    # Build a targeted RAG query: if the question mentions a known SKU, use its
+    # category/dept so we pull the same context docs as the recommendation pipeline.
+    rag_query = question
+    q_upper = question.upper()
+    match = forecast_df[forecast_df["item_id_str"].str.upper().isin([q_upper]) |
+                        forecast_df["item_id_str"].apply(lambda x: x.upper() in q_upper)]
+    if not match.empty:
+        row = match.iloc[0]
+        rag_query = f"{store_id} {row['cat_id_str']} {row['dept_id_str']} trend"
+
+    context_docs = retrieve(rag_query, vector_store_dir, k=6)
 
     client = _get_client()
     response = client.messages.create(

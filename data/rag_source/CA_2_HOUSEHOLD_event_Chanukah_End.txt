@@ -1,0 +1,1 @@
+In CA_2, Chanukah End suppresses HOUSEHOLD category sales by -9.2% vs the 0.79 units/day baseline (n=5235 item-day observations). Factor this when Chanukah End falls within the forecast horizon.

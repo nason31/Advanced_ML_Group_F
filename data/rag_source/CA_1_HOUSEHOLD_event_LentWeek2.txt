@@ -1,0 +1,1 @@
+In CA_1, LentWeek2 suppresses HOUSEHOLD category sales by -27.2% vs the 0.72 units/day baseline (n=6282 item-day observations). Factor this when LentWeek2 falls within the forecast horizon.

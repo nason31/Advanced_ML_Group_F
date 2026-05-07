@@ -1,0 +1,1 @@
+In TX_1, NewYear suppresses HOBBIES category sales by -35.2% vs the 0.40 units/day baseline (n=2825 item-day observations). Factor this when NewYear falls within the forecast horizon.

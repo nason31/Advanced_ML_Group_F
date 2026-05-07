@@ -1,0 +1,1 @@
+In CA_1, Christmas suppresses FOODS category sales by -100.0% vs the 1.96 units/day baseline (n=7185 item-day observations). Factor this when Christmas falls within the forecast horizon.

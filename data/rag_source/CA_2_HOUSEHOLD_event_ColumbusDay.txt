@@ -1,0 +1,1 @@
+In CA_2, ColumbusDay suppresses HOUSEHOLD category sales by -6.2% vs the 0.79 units/day baseline (n=5235 item-day observations). Factor this when ColumbusDay falls within the forecast horizon.

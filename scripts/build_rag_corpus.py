@@ -52,7 +52,7 @@ def _long_for_store(sales: pd.DataFrame, calendar: pd.DataFrame, store: str) -> 
     )
     cal_keep = [
         "d", "wday", "month", "year", "wm_yr_wk",
-        "event_name_1", "snap_CA", "snap_TX", "snap_WI",
+        "event_name_1", "event_name_2", "snap_CA", "snap_TX", "snap_WI",
     ]
     return long.merge(calendar[cal_keep], on="d", how="left")
 
@@ -80,25 +80,44 @@ def snap_lift_blurbs(long_df: pd.DataFrame, store: str) -> list[tuple[str, str]]
     return out
 
 
-def event_lift_blurbs(long_df: pd.DataFrame, store: str, top_n: int = 3) -> list[tuple[str, str]]:
-    base_mean = long_df["sales"].mean()
-    evt = long_df[long_df["event_name_1"].notna()]
-    stats = evt.groupby("event_name_1")["sales"].agg(["mean", "count"])
-    stats = stats[stats["count"] >= 5]
-    if stats.empty:
+MONTH_NAMES = {
+    1: "January", 2: "February", 3: "March", 4: "April",
+    5: "May", 6: "June", 7: "July", 8: "August",
+    9: "September", 10: "October", 11: "November", 12: "December",
+}
+
+
+def event_lift_blurbs(long_df: pd.DataFrame, store: str, min_lift_pct: float = 5.0) -> list[tuple[str, str]]:
+    """Per-category event lift docs covering all events in both event columns."""
+    # Combine both event columns into a single event label per row
+    df = long_df.copy()
+    df["event"] = df["event_name_1"].fillna(df.get("event_name_2", pd.Series(dtype=str)))
+
+    base = df.groupby("cat_id")["sales"].mean().rename("base_mean")
+    evt = df[df["event"].notna()]
+    if evt.empty:
         return []
-    stats["lift_pct"] = (stats["mean"] - base_mean) / base_mean * 100
-    top = stats.reindex(stats["lift_pct"].abs().sort_values(ascending=False).index).head(top_n)
+
+    stats = (
+        evt.groupby(["cat_id", "event"])["sales"]
+        .agg(["mean", "count"])
+        .reset_index()
+    )
+    stats = stats[stats["count"] >= 5]
+    stats = stats.join(base, on="cat_id")
+    stats["lift_pct"] = (stats["mean"] - stats["base_mean"]) / stats["base_mean"] * 100
+    stats = stats[stats["lift_pct"].abs() >= min_lift_pct]
 
     out = []
-    for name, row in top.iterrows():
-        safe = str(name).replace(" ", "_").replace("'", "")
+    for _, row in stats.iterrows():
+        safe_event = str(row["event"]).replace(" ", "_").replace("'", "")
+        direction = "lifts" if row["lift_pct"] > 0 else "suppresses"
         out.append((
-            f"{store}_event_{safe}",
-            f"In {store}, {name} produces average sales of {row['mean']:.2f} units/day "
-            f"({row['lift_pct']:+.1f}% vs the {base_mean:.2f} all-day baseline, "
-            f"n={int(row['count'])} item-day observations). Factor this event when it "
-            "falls within the forecast horizon."
+            f"{store}_{row['cat_id']}_event_{safe_event}",
+            f"In {store}, {row['event']} {direction} {row['cat_id']} category sales by "
+            f"{row['lift_pct']:+.1f}% vs the {row['base_mean']:.2f} units/day baseline "
+            f"(n={int(row['count'])} item-day observations). "
+            f"Factor this when {row['event']} falls within the forecast horizon."
         ))
     return out
 
@@ -183,6 +202,74 @@ def yoy_blurbs(long_df: pd.DataFrame, store: str) -> list[tuple[str, str]]:
     return out
 
 
+def per_sku_blurbs(
+    long_df: pd.DataFrame,
+    sell_prices: pd.DataFrame,
+    store: str,
+    top_n: int = 50,
+    price_drop_threshold: float = 10.0,
+) -> list[tuple[str, str]]:
+    """One blurb per top-N SKU summarising seasonal pattern, weekday peak, and price sensitivity."""
+    # Top SKUs by total sales volume
+    top_items = (
+        long_df.groupby("item_id")["sales"].sum()
+        .sort_values(ascending=False)
+        .head(top_n)
+        .index.tolist()
+    )
+
+    prices = sell_prices[sell_prices["store_id"] == store].sort_values(["item_id", "wm_yr_wk"]).copy()
+    prices["price_lag"] = prices.groupby("item_id")["sell_price"].shift(1)
+    prices["pct_change"] = (prices["sell_price"] - prices["price_lag"]) / prices["price_lag"] * 100
+
+    out = []
+    for item_id in top_items:
+        sku_df = long_df[long_df["item_id"] == item_id]
+        if sku_df.empty:
+            continue
+
+        # Seasonal pattern: peak and trough month
+        monthly = sku_df.groupby("month")["sales"].mean()
+        peak_month = int(monthly.idxmax())
+        trough_month = int(monthly.idxmin())
+        seasonal_spread = (monthly.max() - monthly.min()) / monthly.mean() * 100
+
+        # Weekday peak
+        wday_mean = sku_df.groupby("wday")["sales"].mean()
+        peak_wday = WDAY_NAMES.get(int(wday_mean.idxmax()), "unknown")
+
+        # Price sensitivity
+        sku_prices = prices[prices["item_id"] == item_id]
+        weekly = sku_df.groupby("wm_yr_wk")["sales"].sum().reset_index()
+        joined = weekly.merge(sku_prices[["wm_yr_wk", "pct_change"]], on="wm_yr_wk", how="left")
+        drop_weeks = joined[joined["pct_change"] <= -price_drop_threshold]
+        normal_weeks = joined[joined["pct_change"] > -price_drop_threshold]
+        price_line = ""
+        if len(drop_weeks) >= 2 and len(normal_weeks) >= 2:
+            drop_mean = drop_weeks["sales"].mean()
+            normal_mean = normal_weeks["sales"].mean()
+            if normal_mean > 0:
+                price_lift = (drop_mean - normal_mean) / normal_mean * 100
+                price_line = (
+                    f" Price sensitivity: a >={price_drop_threshold:.0f}% price cut drives "
+                    f"{price_lift:+.1f}% weekly sales uplift (n={len(drop_weeks)} observed weeks)."
+                )
+
+        cat_id = sku_df["cat_id"].iloc[0]
+        dept_id = sku_df["dept_id"].iloc[0]
+        avg_daily = sku_df["sales"].mean()
+
+        out.append((
+            f"{store}_sku_{item_id}",
+            f"{item_id} ({cat_id}, {dept_id}) in {store}: avg {avg_daily:.2f} units/day. "
+            f"Peak month {MONTH_NAMES[peak_month]}, trough {MONTH_NAMES[trough_month]} "
+            f"(seasonal spread {seasonal_spread:.1f}%). "
+            f"Sells most on {peak_wday}s."
+            f"{price_line}"
+        ))
+    return out
+
+
 def main() -> None:
     SOURCE_DIR.mkdir(parents=True, exist_ok=True)
     VECTOR_DIR.mkdir(parents=True, exist_ok=True)
@@ -205,6 +292,7 @@ def main() -> None:
         store_blurbs += weekday_blurbs(long_df, store)
         store_blurbs += price_elasticity_blurbs(long_df, dfs["sell_prices"], store)
         store_blurbs += yoy_blurbs(long_df, store)
+        store_blurbs += per_sku_blurbs(long_df, dfs["sell_prices"], store)
 
         print(f"  {store}: {len(store_blurbs)} blurbs")
         all_blurbs.extend(store_blurbs)

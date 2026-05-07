@@ -1,0 +1,1 @@
+In CA_2, Father's day lifts FOODS category sales by +13.7% vs the 1.28 units/day baseline (n=5748 item-day observations). Factor this when Father's day falls within the forecast horizon.

@@ -1,0 +1,1 @@
+In CA_2, MartinLutherKingDay lifts HOUSEHOLD category sales by +7.4% vs the 0.79 units/day baseline (n=5235 item-day observations). Factor this when MartinLutherKingDay falls within the forecast horizon.

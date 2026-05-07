@@ -1,0 +1,1 @@
+In CA_1, Thanksgiving suppresses HOBBIES category sales by -70.5% vs the 0.81 units/day baseline (n=2825 item-day observations). Factor this when Thanksgiving falls within the forecast horizon.

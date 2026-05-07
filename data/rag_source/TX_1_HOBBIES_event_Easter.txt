@@ -1,0 +1,1 @@
+In TX_1, Easter lifts HOBBIES category sales by +24.2% vs the 0.40 units/day baseline (n=2825 item-day observations). Factor this when Easter falls within the forecast horizon.

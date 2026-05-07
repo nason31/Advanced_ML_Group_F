@@ -1,0 +1,1 @@
+FOODS_2_244 (FOODS, FOODS_2) in CA_1: avg 10.41 units/day. Peak month April, trough November (seasonal spread 29.1%). Sells most on Sundays.
