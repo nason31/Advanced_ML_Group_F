@@ -20,7 +20,7 @@ def answer_question(
     question, then calls Claude with both as grounding context.
     """
     forecast_df = forecast_with_names(store_id, date, data_dir)
-    summary_text, _ = summarize_forecast(forecast_df, top_k=5)
+    summary_text, _ = summarize_forecast(forecast_df, bucket_size=5)
 
     context_docs = retrieve(question, vector_store_dir, k=4)
 
