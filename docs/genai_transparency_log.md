@@ -29,6 +29,27 @@ Human Review: [what you changed, verified, or rejected]
 
 <!-- Append new entries at the TOP (newest-first order). -->
 
+Date: 2026-05-07
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Q&A chatbot overhaul and RAG expansion - fixing a broken Q&A feature, expanding the context corpus from 57 to 382 docs, and improving answer quality and UI for store managers.
+AI Contribution: Claude implemented changes across 4 commits (b483574, cbf4a1a, b40c226, a76b265):
+  (1) fix(qa) b483574 - corrected summarize_forecast() call in qa.py: wrong keyword argument top_k -> bucket_size.
+  (2) feat(rag) cbf4a1a - expanded RAG corpus from 57 to 382 docs across 3 stores:
+      - scripts/build_rag_corpus.py: rewrote event_lift_blurbs() to compute lift per category x event (not store-wide average), covering all events with >5% lift and picking up the event_name_2 calendar column. Added new per_sku_blurbs() function generating one doc per top-50 SKU per store, covering seasonal peak/trough months, best sales weekday, and price sensitivity.
+      - src/llm/qa.py: RAG retrieval k=4 -> k=6; added SKU-matching logic to use category/dept for targeted RAG query.
+      - src/llm/prompts.py: rewrote QA system prompt to lead with best explanation, no headers/bullets, strict 2-3 sentence limit.
+  (3) fix(qa) b40c226 - rewrote QA system prompt again for fully plain language: "selling fast" not "elevated delta", no em dashes, strict 2-sentence format, translate percentages to plain English ("about 5 times normal").
+  (4) feat(qa+ui) a76b265 - product name and dept name wiring:
+      - src/data/product_names.py: added DEPT_NAMES mapping (FOODS_3 -> "Snacks & Beverages" etc.) and get_dept_name() function.
+      - app/components/briefing_card.py: added Department column between Product and Confidence in the briefing table.
+      - src/llm/qa.py: refactored to accept active_products {name: sku} from caller instead of scanning all 3000 forecast SKUs - fixes product name collision issue where multiple SKUs shared the same name.
+      - app/main.py: builds active_products from the 9 current recs only; passes dept name in context so Claude says "Snacks & Beverages" not "FOODS_3"; updated Ask Your Data caption to plain manager language.
+      - src/llm/prompts.py: build_qa_prompt() now accepts and renders a Product Name to SKU Mapping section so Claude can match "Maple Syrup" to the right SKU.
+Human Review: Diagnosed the top_k bug from the error message. Set per-category event lift threshold at >5% lift (below that is noise). Decided to pass active_products from the caller (9 recs) rather than building from all forecast SKUs after observing that multiple SKUs share the same product name and the wrong one was being picked. Reviewed all dept name labels for retail accuracy before committing. Verified the Department column renders correctly in the table. Confirmed max_tokens reduced from 512 to 256 to enforce shorter answers.
+
+---
+
 Date: 2026-05-06
 Team Member: Leticia
 Tool Used: Claude Code (claude-sonnet-4-6)
