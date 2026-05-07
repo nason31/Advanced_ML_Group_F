@@ -40,6 +40,8 @@ def _build_seed(row: pd.Series, promote_candidate: bool) -> dict:
         "cat_id":           cat,
         "direction":        row["direction"],
         "delta_pct":        pct,
+        "baseline":         float(row["baseline"]),
+        "sell_price":       float(row.get("sell_price", 0.0)),
         "promote_candidate": promote_candidate,
         "focus_line": (
             f"Focus this recommendation on SKU {item} in category {cat}: "

@@ -18,6 +18,19 @@ class Rec:
     numeric_check: str = ""
     confidence: str = ""  # "High" | "Medium" | "Low"
     delta_pct: float = 0.0
+    impact: str = ""     # e.g. "~€370 extra rev (7d)" or "Order ~42 units (7d)"
+
+
+def _compute_impact(rec_type: str, delta_pct: float, baseline: float, sell_price: float, horizon: int = 7) -> str:
+    """Deterministic revenue or unit impact estimate over a 7-day horizon."""
+    extra_units = baseline * (abs(delta_pct) / 100.0) * horizon
+    revenue = extra_units * sell_price
+    if rec_type == "promote":
+        return f"~€{revenue:.0f} extra rev (7d)"
+    elif rec_type == "restock":
+        return f"Order ~{extra_units:.0f} units (7d)"
+    else:  # markdown
+        return f"~€{revenue:.0f} at risk (7d)"
 
 
 def _compute_confidence(delta_pct: float) -> str:
@@ -80,6 +93,12 @@ def run_pipeline(
             numeric_check=guard_out["numeric_check"],
             confidence=_compute_confidence(seed["delta_pct"]),
             delta_pct=seed["delta_pct"],
+            impact=_compute_impact(
+                rec_type,
+                seed["delta_pct"],
+                seed.get("baseline", 1.0),
+                seed.get("sell_price", 0.0),
+            ),
         ))
 
     return recs

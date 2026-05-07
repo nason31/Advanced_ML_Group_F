@@ -84,7 +84,7 @@ def forecast_store(
 
     out_cols = [
         "id", "item_id", "dept_id", "cat_id",
-        "predicted", "baseline", "delta_pct", "direction",
+        "predicted", "baseline", "delta_pct", "direction", "sell_price",
     ]
     return latest[out_cols].reset_index(drop=True)
 

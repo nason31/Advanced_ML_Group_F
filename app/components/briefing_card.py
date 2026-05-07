@@ -37,8 +37,8 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
     actions: list[tuple[int, str]] = []
 
     # Table header
-    h = st.columns([0.75, 1.05, 1.4, 1.05, 0.85, 0.75, 0.85, 0.85])
-    for col, label in zip(h, ["Type", "SKU", "Product", "Department", "Confidence", "Delta", "", ""]):
+    h = st.columns([0.75, 1.0, 1.3, 1.0, 0.8, 0.75, 1.1])
+    for col, label in zip(h, ["Type", "SKU", "Product", "Department", "Confidence", "Delta", "Impact"]):
         col.markdown(f"<span style='font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.05em;'>{label}</span>", unsafe_allow_html=True)
     st.markdown("<hr style='margin:4px 0 8px 0;border-color:#e5e7eb;'>", unsafe_allow_html=True)
 
@@ -52,7 +52,7 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
         delta_color = "#166534" if rec.delta_pct > 0 else "#9b1c1c"
         delta_bg = "#dcfce7" if rec.delta_pct > 0 else "#fee2e2"
 
-        cols = st.columns([0.75, 1.05, 1.4, 1.05, 0.85, 0.75, 0.85, 0.85])
+        cols = st.columns([0.75, 1.0, 1.3, 1.0, 0.8, 0.75, 1.1])
 
         cols[0].markdown(
             f"<span style='background:{bg};color:{fg};padding:2px 8px;border-radius:4px;"
@@ -73,10 +73,10 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
             f"{arrow} {rec.delta_pct:+.1f}%</span>",
             unsafe_allow_html=True,
         )
-        if cols[6].button("Accept", key=f"accept_{i}", type="primary", use_container_width=True):
-            actions.append((i, "accept"))
-        if cols[7].button("Reject", key=f"reject_{i}", use_container_width=True):
-            actions.append((i, "reject"))
+        cols[6].markdown(
+            f"<span style='color:#374151;font-size:0.85em;font-weight:600;'>{rec.impact or '-'}</span>",
+            unsafe_allow_html=True,
+        )
 
         with st.expander(f"Details - {product_name}", expanded=False):
             if rec.flagged:
@@ -86,6 +86,12 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
             dcol1, dcol2 = st.columns(2)
             dcol1.caption(f"**Intent check:** {rec.intent_check or 'n/a'}")
             dcol2.caption(f"**Numeric check:** {rec.numeric_check or 'n/a'}")
+            st.markdown("")
+            bcol1, bcol2, _ = st.columns([1, 1, 2])
+            if bcol1.button("Accept", key=f"accept_{i}", type="primary", use_container_width=True):
+                actions.append((i, "accept"))
+            if bcol2.button("Reject", key=f"reject_{i}", use_container_width=True):
+                actions.append((i, "reject"))
 
         st.markdown("<hr style='margin:6px 0;border-color:#f3f4f6;'>", unsafe_allow_html=True)
 
