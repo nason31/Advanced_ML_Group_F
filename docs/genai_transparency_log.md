@@ -29,6 +29,24 @@ Human Review: [what you changed, verified, or rejected]
 
 <!-- Append new entries at the TOP (newest-first order). -->
 
+Date: 2026-05-10
+Team Member: Justus
+Tool Used: Claude Code (claude-opus-4-7)
+Task: Local end-to-end smoke test of main after Leticia's May 1/6/7 work, diagnosing a crash that surfaced, then bundling the fix and a project-plan trim into a cleanup branch ahead of the Streamlit Cloud deploy. Multi-day arc: smoke test + rebuild on May 9, branch + commits on May 10.
+AI Contribution: Two commits on branch chore/cleanup-and-deploy-prep (dd868e8, 0467a3c).
+  Diagnosis (May 9):
+  - Streamlit launched cleanly but "Generate Today's Briefing" failed with "Pipeline failed: object of type 'int' has no len()". Engine.py swallows tracebacks behind try/except, so reproduced headlessly via `python -c "from src.recommendations.engine import run_pipeline; ..."` to surface the real stack.
+  - Stack pointed at chromadb's _decode_seq_id calling len() on an int. Root cause: the committed data/vector_store/ SQLite was written by a different chromadb build than the 0.5.0 pinned in requirements.txt, so the on-disk seq_id storage format (BLOB vs INTEGER) was incompatible with the running version.
+  - Fix path: deleted data/vector_store/ and re-ran scripts/build_rag_corpus.py (the May 7 version Leticia wrote). Regenerated the same 382 M5-derived blurbs (124 CA_1 + 131 CA_2 + 127 TX_1) under chromadb 0.5.0. New collection UUID 6a0819b2-... replaces the old a1795dd4-...
+  - Verified end-to-end: 9 well-formed recs (3 PROMOTE / 3 RESTOCK / 3 MARKDOWN) returned in ~50s, none flagged. Same shape as Justus's Apr 26 smoke test.
+  Cleanup branch (May 10), per Leticia's request to tighten the plan and clean residue:
+  (1) dd868e8 fix(rag): rebuild vector store under chromadb 0.5.0 to fix len() crash. Stages the rebuilt SQLite + new HNSW collection dir, drops the old collection, restores .gitkeep. Same fix applied locally on May 9, just committed today so origin/main and Streamlit Cloud get the working artefact too.
+  (2) 0467a3c docs(project-plan): close completed tech items, narrow tech scope to deploy + model. Per Leticia's read on May 10, only "Deploy to live URL" and the optional "Model improvement" remain on the tech track. Ticked UI polish (May 1 + May 7 work shipped it: ACTION column, Impact column, Department names, confidence badges, delta arrows, Generate Today's Briefing button). Folded "Lock demo scenario" into Marie's existing Demo script row to remove duplication. Promoted Deploy to bold "biggest remaining tech blocker". Added two ticks to the presentation-day checklist (UI polish, vector store rebuild).
+  Also surveyed the repo for residue per Leticia's "stuff lying around" note: nothing tracked is dead. __pycache__ everywhere, .pytest_cache, .vscode, .ipynb_checkpoints all already in .gitignore. Deleted local __pycache__ dirs and .pytest_cache as one-off hygiene with no git change. Notebook 01_baseline.ipynb kept on purpose - documented context for the Apr 23 baseline result, no clear reason to delete.
+Human Review: Drove the diagnostic process - confirmed the crash reproduced from a plain python -c invocation independent of Streamlit, ruling out the UI layer. Authorised the destructive `rm -rf data/vector_store/` only after confirming the rebuild script could regenerate from data/raw/ (no Kaggle round-trip needed). Sourced .env into the test shell after Claude flagged the headless test missed dotenv loading. Approved the branch name and commit-by-commit plan before staging. Reviewed both diffs before commit. Rejected one Claude suggestion to add .pytest_cache/ to .gitignore defensively - it has never been tracked, so a "just in case" change is unnecessary churn. Declined the open question on deleting notebooks/01_baseline.ipynb. Branch is local only - not pushed yet pending the deploy session.
+
+---
+
 Date: 2026-05-07
 Team Member: Leticia
 Tool Used: Claude Code (claude-sonnet-4-6)
