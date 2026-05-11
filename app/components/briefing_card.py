@@ -82,6 +82,14 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
         if cols[8].button("Reject", key=f"reject_{i}", use_container_width=True):
             actions.append((i, "reject"))
 
+        if rec.flagged:
+            st.markdown(
+                f"<div style='background:#fef9c3;border:1px solid #f59e0b;border-radius:4px;"
+                f"padding:5px 12px;margin:2px 0 4px 0;font-size:0.82em;color:#854d0e;'>"
+                f"⚠ Guard flagged: {rec.flag_reason}</div>",
+                unsafe_allow_html=True,
+            )
+
         with st.expander(f"Details - {product_name}", expanded=False):
             if rec.action_detail:
                 st.info(rec.action_detail)
@@ -93,6 +101,11 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
             dcol1.caption(f"**Intent check:** {rec.intent_check or 'n/a'}")
             dcol2.caption(f"**Numeric check:** {rec.numeric_check or 'n/a'}")
 
+        st.markdown(
+            "<p style='font-size:0.75em;color:#9ca3af;margin:2px 0 4px 0;'>"
+            "AI-generated recommendation - manager review required</p>",
+            unsafe_allow_html=True,
+        )
         st.markdown("<hr style='margin:6px 0;border-color:#f3f4f6;'>", unsafe_allow_html=True)
 
     return actions
