@@ -32,6 +32,28 @@ Human Review: [what you changed, verified, or rejected]
 Date: 2026-05-11
 Team Member: Justus
 Tool Used: Claude Code (claude-opus-4-7), with the superpowers:systematic-debugging skill
+Task: Round 4 of the cloud-deploy debugging arc - after the model_kwargs={"low_cpu_mem_usage": False} fix (PR #7) was merged and redeployed, the briefing pipeline crashed with the IDENTICAL "Cannot copy out of meta tensor" error again. Two failed fixes against the same symptom; per the systematic-debugging skill, "if 3+ fixes fail, question the architecture - do not stack another guess". Pivoted: stopped trying to make sentence-transformers + torch work on cloud, and switched the embedding layer to ChromaDB's built-in ONNX-based DefaultEmbeddingFunction instead. Bypasses the entire torch + transformers + sentence-transformers stack.
+AI Contribution: One commit on branch fix/switch-to-onnx-embeddings (864caee).
+  Trigger for the architectural pivot:
+  - Round 1 (de317a0, merged in PR #6): bump sentence-transformers 3.0.1 -> 3.2.1. Failed. Same error on redeploy.
+  - Round 2 (ecac035, merged in PR #7): pass model_kwargs={"low_cpu_mem_usage": False} through chromadb to disable HF meta-init. Failed. Same error on redeploy.
+  - Per the skill: after two failed fixes against the same symptom, the next step is NOT a third dep / kwarg guess. User intuited this independently and asked "how about just using the different command?" which was the architecturally right move.
+  Round 4 change (commit 864caee):
+  - src/rag/retriever.py: replaced SentenceTransformerEmbeddingFunction with chromadb.utils.embedding_functions.DefaultEmbeddingFunction (ONNX Runtime + all-MiniLM-L6-v2). Same model family, different inference runtime that does not touch torch.
+  - src/rag/ingest.py: same swap, so the build-time and serve-time embedding functions stay in sync. Mismatched functions would produce vectors that retrieve garbage at query time.
+  - requirements.txt: dropped sentence-transformers==3.2.1. With no remaining import of sentence_transformers in the codebase (verified by grep), the package and its ~1.5GB of transitive torch + transformers + accelerate weight is no longer needed. Smaller cloud container, faster cold-start.
+  - Cleanup inside retriever.py: removed the now-defunct os.environ.setdefault("TOKENIZERS_PARALLELISM"/"OMP_NUM_THREADS") calls. They guarded a macOS spawn-method deadlock specific to sentence-transformers + loky multiprocessing; ONNX Runtime does not spawn multiprocess workers.
+  - data/vector_store/: wiped and rebuilt locally via scripts/build_rag_corpus.py running against the new ingest.py. Old SentenceTransformer-embedded vectors are NOT interchangeable with the new ONNX-embedded vectors, so the store had to be reseeded. Same 382 M5-derived blurbs (124 + 131 + 127 across CA_1, CA_2, TX_1). New collection UUID bdec07c9-... replaces the old 6a0819b2-...
+  Local verification before pushing:
+  - Headless smoke test: from src.recommendations.engine import run_pipeline; ran on CA_1; received 9 well-formed recs (3 PROMOTE / 3 RESTOCK / 3 MARKDOWN), none flagged. End-to-end pipeline works with the new embeddings.
+  - The user explicitly asked to NOT claim success until the live cloud URL renders a briefing, so this is "verified locally, pending cloud verification" only.
+Human Review: After round 2 failed identically, asked the assistant to STOP proposing more fixes. Proposed the architectural pivot ("how about just using the different command?") rather than waiting for the assistant to escalate it. Authorised the full migration (code + dep removal + vector store rebuild) as one atomic change rather than splitting across multiple commits. Reviewed all four changed files plus the rebuilt store binary before approving the commit. Requested the log entry be written as a continuation of the existing round 1 + round 2 entry rather than as a separate new debugging series. Awaiting cloud redeploy verification before declaring fixed.
+
+---
+
+Date: 2026-05-11
+Team Member: Justus
+Tool Used: Claude Code (claude-opus-4-7), with the superpowers:systematic-debugging skill
 Task: Third cloud-deploy crash session - after the sentence-transformers 3.0.1 -> 3.2.1 bump (PR #6) was merged and Streamlit Cloud redeployed, the briefing pipeline crashed with the IDENTICAL "Cannot copy out of meta tensor; no data!" error. First hypothesis was wrong. Reset to Phase 1 of systematic-debugging with new evidence, researched the actual cause, identified a code-level fix, branched it. Logged as one consolidated entry covering both rounds per the rule against fragmenting a single debugging arc.
 AI Contribution: One commit on branch fix/disable-meta-init.
   Round 1 (failed hypothesis, already on main as de317a0):

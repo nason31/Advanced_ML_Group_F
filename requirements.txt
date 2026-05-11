@@ -9,7 +9,6 @@ lightgbm==4.3.0
 
 # RAG
 chromadb==0.5.0
-sentence-transformers==3.2.1
 
 # LLM
 anthropic==0.97.0

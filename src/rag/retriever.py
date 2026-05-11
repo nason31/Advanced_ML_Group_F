@@ -1,34 +1,17 @@
-import os
 from functools import lru_cache
 from pathlib import Path
 
-# Disable joblib/loky multiprocessing inside sentence-transformers. On macOS
-# with the default `spawn` start method, the embedding function can hang on
-# a leaked POSIX semaphore when called outside an `if __name__ == "__main__":`
-# guard (Streamlit and `python -c` invocations). Single-thread is plenty fast
-# for our ~50-doc corpus.
-os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
-os.environ.setdefault("OMP_NUM_THREADS", "1")
-
 import chromadb
-from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 
 
 @lru_cache(maxsize=4)
 def _get_collection(store_dir_str: str):
     """Cache the (client, embedding fn, collection) trio per vector-store path
-    so each retrieve() call after the first does not re-load sentence-transformers.
+    so each retrieve() call after the first does not re-load the embedder.
     """
     client = chromadb.PersistentClient(path=store_dir_str)
-    # model_kwargs disables HuggingFace's meta-device lazy init. Without this,
-    # newer transformers (>=4.40) loads weights to meta first, then sentence-
-    # transformers calls .to(device) which raises "Cannot copy out of meta
-    # tensor" on torch >=2.6. low_cpu_mem_usage=False forces direct-to-device
-    # loading. Surfaced on Streamlit Cloud cold start (no cached model).
-    ef = SentenceTransformerEmbeddingFunction(
-        model_name="all-MiniLM-L6-v2",
-        model_kwargs={"low_cpu_mem_usage": False},
-    )
+    ef = DefaultEmbeddingFunction()
     return client.get_collection("campaigns", embedding_function=ef)
 
 
