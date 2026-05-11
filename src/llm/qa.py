@@ -28,18 +28,19 @@ def answer_question(
     q_upper = question.upper()
 
     if active_products:
+        matched = False
         for name, sku in active_products.items():
             if name.upper() in q_upper or q_upper in name.upper():
-                # Look up this SKU's category/dept for a targeted RAG query
                 match = forecast_df[
                     forecast_df["item_id_str"].apply(lambda x: str(x).upper() == sku.upper())
                 ]
                 if not match.empty:
                     row = match.iloc[0]
                     rag_query = f"{store_id} {row['cat_id_str']} {row['dept_id_str']} trend"
+                matched = True
                 break
-        else:
-            # Fall back to SKU code match
+
+        if not matched:
             sku_match = forecast_df[
                 forecast_df["item_id_str"].apply(lambda x: str(x).upper() in q_upper)
             ]
