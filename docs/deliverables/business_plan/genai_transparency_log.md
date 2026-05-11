@@ -30,6 +30,30 @@ Human Review: [what you changed, verified, or rejected]
 <!-- Append new entries at the TOP (newest-first order). -->
 
 Date: 2026-05-11
+Team Member: Justus
+Tool Used: Claude Code (claude-opus-4-7)
+Task: Streamlit Cloud deploy session - took main from "deploy-ready" to "live and serving briefings". First deploy build succeeded but the briefing pipeline failed on first generation due to a hardcoded offline flag in retriever.py blocking the embedding model download on cold-start. Diagnosed, branched the fix, ready to merge.
+AI Contribution: One commit on branch fix/hf-offline-cloud-deploy (b5fc6e3).
+  Deploy walk-through:
+  - share.streamlit.io: new app from nason31/Advanced_ML_Group_F, branch main, main file app/main.py, Python 3.12, ANTHROPIC_API_KEY pasted into the Secrets UI in TOML format.
+  - First build green (~3-5 min installing LightGBM, ChromaDB, sentence-transformers, anthropic 0.97.0).
+  - App booted successfully; UI rendered correctly with the sidebar (store dropdown, Generate button, Ask Your Data).
+  Crash on first briefing:
+  - Clicked Generate Today's Briefing on CA_1; "Analysing products..." spinner ran briefly then errored: "Pipeline failed: We couldn't connect to https://huggingface.co to load the files, and couldn't find them in the cached files."
+  - Root cause: src/rag/retriever.py lines 10-11 hardcode HF_HUB_OFFLINE=1 + TRANSFORMERS_OFFLINE=1 via os.environ.setdefault. This was the right call on Apr 26 (macOS local, model cached, CDN load-balancer hang) and Leticia explicitly preserved it on May 11. But the Streamlit Cloud container has no pre-cached model, so the offline flag forces an "OSError: couldn't find files locally" the first time SentenceTransformerEmbeddingFunction tries to load all-MiniLM-L6-v2.
+  Fix (b5fc6e3 on branch fix/hf-offline-cloud-deploy):
+  - Removed both os.environ.setdefault lines for HF_HUB_OFFLINE and TRANSFORMERS_OFFLINE.
+  - Kept TOKENIZERS_PARALLELISM=false and OMP_NUM_THREADS=1 (they guard a separate macOS spawn-method deadlock and are harmless on Linux).
+  - Net cost: ~30-60s first-briefing cold start while the model downloads, then cached on the container. Subsequent briefings stay fast (~5-10s thanks to the May 11 ThreadPoolExecutor parallelization).
+  - lru_cache on _get_collection still ensures the model loads once per process, so the network call only happens on the very first retrieve() call after a container restart.
+  Repoint vs merge decision:
+  - Original plan was to repoint Streamlit Cloud at the fix branch to test before merging. Streamlit Cloud UI does not expose branch-switch cleanly (treats it as effectively immutable post-deploy); the alternative would be delete + redeploy the app.
+  - Decided to merge to main instead given the change is 8 deleted lines with a clear hypothesis and a 30-second revert path. PR open at github.com/nason31/Advanced_ML_Group_F/pull/new/fix/hf-offline-cloud-deploy.
+Human Review: Rejected Claude's first attempt to commit and push the fix directly to main; required a feature branch first. Authorised the push to origin/fix/hf-offline-cloud-deploy after reviewing the diff. Initially asked to repoint Streamlit Cloud at the branch to test in isolation; after confirming Streamlit Cloud does not support clean mid-deploy branch changes, agreed to merge to main as the lower-friction path with adequate safety (revert is trivial). Verified the secret format in the Streamlit Cloud UI (TOML "KEY = value", no export prefix). Read the cloud error message in the UI screenshot before authorising the diagnosis path.
+
+---
+
+Date: 2026-05-11
 Team Member: Leticia
 Tool Used: Claude Code (claude-sonnet-4-6)
 Task: Pre-presentation review session - applied four professor grading prompts (Technical Architecture, Unit Economics, Defensibility, Final Simulation) to the full project, fixed identified issues in the codebase, and reorganised the deliverables structure.
