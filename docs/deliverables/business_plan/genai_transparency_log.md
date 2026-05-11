@@ -31,6 +31,24 @@ Human Review: [what you changed, verified, or rejected]
 
 Date: 2026-05-11
 Team Member: Justus
+Tool Used: Claude Code (claude-opus-4-7), with the superpowers:systematic-debugging skill
+Task: Third cloud-deploy crash session - after the sentence-transformers 3.0.1 -> 3.2.1 bump (PR #6) was merged and Streamlit Cloud redeployed, the briefing pipeline crashed with the IDENTICAL "Cannot copy out of meta tensor; no data!" error. First hypothesis was wrong. Reset to Phase 1 of systematic-debugging with new evidence, researched the actual cause, identified a code-level fix, branched it. Logged as one consolidated entry covering both rounds per the rule against fragmenting a single debugging arc.
+AI Contribution: One commit on branch fix/disable-meta-init.
+  Round 1 (failed hypothesis, already on main as de317a0):
+  - Claim: "sentence-transformers 3.2.0 added explicit meta-tensor handling in .to(device)". This was unverified - I extrapolated from sbert's reputation for tracking torch breaking changes, not from release notes. Bumped 3.0.1 -> 3.2.1, merged, redeployed. Same error.
+  Round 2 (this session, verified evidence):
+  - Phase 1 reset: read the error verbatim again. "Use torch.nn.Module.to_empty() instead of .to() when moving from meta to different device". The directive is at PyTorch's API level - any caller of .to() on a meta tensor will fail under torch >=2.6. The bug is upstream of sentence-transformers' version - it's in HOW the model gets loaded onto meta in the first place.
+  - Research (skill says "if you don't know, research more"): fetched chromadb 0.5.0 source via GitHub (embedding_functions.py). Confirmed SentenceTransformerEmbeddingFunction(__init__) accepts **kwargs and forwards them verbatim to SentenceTransformer(model_name, device=device, **kwargs). Fetched sentence-transformers v3.0.1 source. Confirmed SentenceTransformer(__init__) accepts a named parameter model_kwargs (dict) that is passed to AutoModel.from_pretrained(**model_kwargs) inside _load_auto_model. HuggingFace transformers uses meta-device init when low_cpu_mem_usage=True, which became default in many code paths around 4.40 (mid-2024). Setting low_cpu_mem_usage=False forces direct-to-device loading and avoids meta tensors entirely.
+  - Verified evidence chain: chromadb forwards **kwargs to SentenceTransformer; SentenceTransformer 3.0.1 accepts model_kwargs and forwards to from_pretrained; from_pretrained respects low_cpu_mem_usage=False; no meta-init = no .to() copy error.
+  - Phase 3 hypothesis (with citations this time): add model_kwargs={"low_cpu_mem_usage": False} to the SentenceTransformerEmbeddingFunction(...) call in src/rag/retriever.py. Single argument addition. Bypasses the bug class entirely without changing any dep versions.
+  - Phase 4 fix: edited src/rag/retriever.py:23-32 to pass model_kwargs through, with a 5-line comment explaining the why. Did NOT revert the 3.2.1 bump from round 1 - it's now on main and reverting would be "while-I'm-here" cleanup against the one-change-at-a-time rule. Net deps: still sentence-transformers 3.2.1.
+  - Fallback if round 2 also fails: pin transformers<4.40 to prevent meta-init at the dep level. Not betting on this - the verified evidence chain above is strong enough that I'd want to talk before stacking yet another guess.
+Human Review: Switched the assistant into superpower-skill mode during round 1 after the second cloud failure to enforce systematic discipline. After round 1's hypothesis also failed, explicitly asked the assistant to NOT propose another fix without verified evidence (the skill says "if you don't know, say so - don't pretend"). Reviewed all source-code citations (chromadb 0.5.0, sentence-transformers 3.0.1) before authorising the model_kwargs change. Authorised consolidating both round 1 and round 2 in a single log entry rather than fragmenting across separate entries. Awaiting cloud redeploy result before declaring the fix verified - explicitly not claiming success until the live URL renders a briefing for the first time.
+
+---
+
+Date: 2026-05-11
+Team Member: Justus
 Tool Used: Claude Code (claude-opus-4-7)
 Task: Second cloud-deploy crash session - after the HF offline fix landed and Streamlit Cloud redeployed, the briefing pipeline crashed again on first generation with a different error: "Cannot copy out of meta tensor; no data!". Diagnosed using the systematic-debugging superpowers skill, branched a one-line dependency fix, ready to merge.
 AI Contribution: One commit on branch fix/sentence-transformers-meta-tensor.

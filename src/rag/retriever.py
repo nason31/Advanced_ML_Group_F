@@ -20,7 +20,15 @@ def _get_collection(store_dir_str: str):
     so each retrieve() call after the first does not re-load sentence-transformers.
     """
     client = chromadb.PersistentClient(path=store_dir_str)
-    ef = SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+    # model_kwargs disables HuggingFace's meta-device lazy init. Without this,
+    # newer transformers (>=4.40) loads weights to meta first, then sentence-
+    # transformers calls .to(device) which raises "Cannot copy out of meta
+    # tensor" on torch >=2.6. low_cpu_mem_usage=False forces direct-to-device
+    # loading. Surfaced on Streamlit Cloud cold start (no cached model).
+    ef = SentenceTransformerEmbeddingFunction(
+        model_name="all-MiniLM-L6-v2",
+        model_kwargs={"low_cpu_mem_usage": False},
+    )
     return client.get_collection("campaigns", embedding_function=ef)
 
 
