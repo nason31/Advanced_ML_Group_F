@@ -30,21 +30,21 @@ def _compute_action(rec_type: str, delta_pct: float, baseline: float, sell_price
     if rec_type == "promote":
         if sell_price > 0:
             revenue = extra_units * sell_price
-            badge = f"+€{revenue:.0f} rev"
+            badge = f"~+€{revenue:.0f} rev"
             detail = (
                 f"Suggested action: Move to end-cap or high-traffic display. "
                 f"Keep price at €{sell_price:.2f}/unit - demand is already strong. "
                 f"Expected revenue uplift: ~€{revenue:.0f} over {horizon} days."
             )
         else:
-            badge = f"+{extra_units:.0f} units"
+            badge = f"~+{extra_units:.0f} units"
             detail = (
                 f"Suggested action: Move to end-cap or high-traffic display. "
                 f"Demand is already strong - amplify with visibility. "
                 f"Expected volume uplift: ~{extra_units:.0f} units over {horizon} days."
             )
     elif rec_type == "restock":
-        badge = f"+{extra_units:.0f} units"
+        badge = f"~+{extra_units:.0f} units"
         detail = (
             f"Suggested action: Order ~{extra_units:.0f} units to cover projected demand "
             f"over the next {horizon} days."
@@ -53,13 +53,13 @@ def _compute_action(rec_type: str, delta_pct: float, baseline: float, sell_price
         discount_pct = min(30.0, max(15.0, abs(delta_pct) * 0.05))
         if sell_price > 0:
             new_price = sell_price * (1 - discount_pct / 100.0)
-            badge = f"↓ €{new_price:.2f}"
+            badge = f"~↓ €{new_price:.2f}"
             detail = (
                 f"Suggested action: Reduce price to €{new_price:.2f}/unit (-{discount_pct:.0f}%) "
                 f"to clear declining inventory before it ages."
             )
         else:
-            badge = f"-{discount_pct:.0f}% price"
+            badge = f"~-{discount_pct:.0f}% price"
             detail = (
                 f"Suggested action: Apply a -{discount_pct:.0f}% markdown "
                 f"to clear declining inventory before it ages."
