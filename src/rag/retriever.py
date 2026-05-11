@@ -2,14 +2,6 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-# Force HuggingFace Hub to use only the local cache. Without this, every
-# SentenceTransformerEmbeddingFunction() instantiation makes a network call
-# to the HF CDN to check for model updates, and that call sometimes hangs
-# indefinitely behind a load balancer in CLOSE_WAIT state (observed locally
-# during the Apr 26 smoke test).
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
-
 # Disable joblib/loky multiprocessing inside sentence-transformers. On macOS
 # with the default `spawn` start method, the embedding function can hang on
 # a leaked POSIX semaphore when called outside an `if __name__ == "__main__":`
