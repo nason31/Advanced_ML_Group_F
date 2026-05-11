@@ -29,6 +29,33 @@ Human Review: [what you changed, verified, or rejected]
 
 <!-- Append new entries at the TOP (newest-first order). -->
 
+Date: 2026-05-11
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Pre-presentation review session - applied four professor grading prompts (Technical Architecture, Unit Economics, Defensibility, Final Simulation) to the full project, fixed identified issues in the codebase, and reorganised the deliverables structure.
+AI Contribution: Claude performed a full cross-file codebase and pitch deck review, then implemented 5 commits across 4 files:
+  Analysis:
+  - Technical Architecture Review: identified 4 issues - slow pipeline (9 sequential Claude API calls), frozen spinner UX, audit trail lost on refresh, and NaN sell_price producing broken Impact column values (€nan / €0).
+  - Unit Economics Review: read all 18 slides via python-pptx extraction; confirmed 92% gross margin, LTV/CAC ratios, and three-scenario P&L are correct; flagged Appendix A1 discrepancy (JSON schema and "re-prompt" claim don't match actual code), RAG count inconsistency (282 vs 382 on slides 4 vs 5), and missing temperature=0.2 in code.
+  - Defensibility Review: confirmed not a wrapper (LightGBM + RAG + guard = 3 separate engineering problems); identified feedback loop as aspirational not real (CSV only, no retraining); recommended adding hallucination guard as Moat 04 (compliance-ready, deterministic, auditable).
+  - Final Presentation Simulation: scored 7.5/10 overall (Commercial 7.5, Technical 7.0, Defensibility 7.5, Presentation 8.0); identified top 5 improvements before demo day.
+  Code fixes (3 commits):
+  (1) 119cb03 perf: parallelize briefing generation with ThreadPoolExecutor
+      - src/llm/reasoner.py: added threading.Lock (double-checked locking) to _get_client() for thread-safe singleton init under concurrent calls.
+      - src/recommendations/engine.py: extracted per-seed logic into _process_seed(), parallelized with ThreadPoolExecutor(max_workers=len(rec_seeds)). Reduces generation time from ~45-90s to ~5-10s.
+      - app/main.py: replaced st.spinner with st.status() showing "Analysing products..." during run and collapsing to "Briefing ready - N recommendations" on complete.
+  (2) 2ca0409 fix: persist audit trail to CSV and guard against NaN sell_price
+      - src/recommendations/summarize.py: added math.isnan guard on sell_price in _build_seed() - NaN values sanitized to 0.0 before reaching engine.
+      - src/recommendations/engine.py: _compute_action() now checks sell_price > 0 before computing revenue; falls back to units (PROMOTE) or percentage-only (MARKDOWN) when price is unavailable, so Impact column never shows €nan or €0.
+      - app/main.py: added _load_audit() and _append_audit() helpers; audit_trail.csv written on every accept/reject, loaded on app startup. Audit trail now survives page refresh.
+  Doc/repo changes (2 commits):
+  (3) b02fc17: moved docs/business_plan/ to docs/deliverables/business_plan/, committed pitch deck (Advanced_ML_Pitch_work.pptx).
+  (4) 9ae744b: deleted outdated docs/deliverables/business_plan/outline.md (superseded by pitch deck).
+  Also updated docs/project_plan.md (removed Deploy to live URL and Demo script tasks) and docs/feature_overview.md (RAG count 57→382, added ACTION and Impact column rows).
+Human Review: Confirmed parallelization is safe - each seed is fully independent, Anthropic client is thread-safe, ChromaDB PersistentClient supports concurrent reads. Rejected a proposed fix to remove HF_HUB_OFFLINE=1 from retriever.py after confirming the app runs locally only (model is cached; the original Apr 26 fix remains appropriate). Rejected adding temperature=0.2 to reasoner.py - not needed for local demo. Decided to delete outline.md rather than update it, since the pitch deck is now the authoritative business plan document. Reviewed all diffs before each commit. Verified imports pass after each change.
+
+---
+
 Date: 2026-05-10
 Team Member: Justus
 Tool Used: Claude Code (claude-opus-4-7)
