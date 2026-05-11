@@ -161,6 +161,23 @@ Human Review: Confirmed parallelization is safe - each seed is fully independent
 
 ---
 
+Date: 2026-05-11
+Team Member: Alex
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Updating the business plan from v1.2 to v1.3 to reflect all code changes since May 1 and fixing internal consistency issues identified in a pre-submission review.
+AI Contribution: Claude read all current source files and the codebase genai transparency log, identified divergences between the v1.2 business plan and the current codebase, and implemented targeted edits to build_business_plan.py:
+  (1) RAG corpus count updated from 57 to 382 documents throughout.
+  (2) PROMOTE threshold corrected from +15% to +50% to match summarize.py; RESTOCK documented as the 15-50% range.
+  (3) Token economics revised from 5 recs at €0.026/briefing to up to 9 recs at €0.043/briefing; prompt caching opportunity (90% input cost reduction) added as a planned optimisation.
+  (4) ACTION column feature (quantifiable impact badges: +€X rev / +X units / ↓ €X.XX) added to Sections 2.2, 4.2, and 6.3.
+  (5) Ask Your Data updated to reflect k=6 RAG retrieval, product name matching, and 2-sentence plain-language format.
+  (6) Note added to Section 6.5 clarifying that the system prompt's ">+15%" is directional guidance for Claude's copy generation, while the actual classification threshold is PROMOTE_THRESHOLD = 50.0 in summarize.py. The LLM receives the pre-classified seed with an explicit "PROMOTE THIS candidate" tag, not the threshold number.
+  (7) Break-even updated from 78 to 79 stores, gross margin from 92% to 91%, fully loaded per-store cost from €25 to €27/month to reflect higher per-briefing LLM cost.
+  (8) GenAI transparency log appendix removed from the business plan document; missing sessions added to this file instead.
+Human Review: Alex verified all updated numbers against current source files. Confirmed PROMOTE threshold change against summarize.py line 18. Confirmed token cost recalculation against Claude Sonnet 4.6 published pricing ($3/MTok input, $15/MTok output). Confirmed gross margin and break-even recalculation manually. Approved all section additions. Regenerated .docx via build_business_plan.py.
+
+---
+
 Date: 2026-05-10
 Team Member: Justus
 Tool Used: Claude Code (claude-opus-4-7)
@@ -176,6 +193,15 @@ AI Contribution: Two commits on branch chore/cleanup-and-deploy-prep (dd868e8, 0
   (2) 0467a3c docs(project-plan): close completed tech items, narrow tech scope to deploy + model. Per Leticia's read on May 10, only "Deploy to live URL" and the optional "Model improvement" remain on the tech track. Ticked UI polish (May 1 + May 7 work shipped it: ACTION column, Impact column, Department names, confidence badges, delta arrows, Generate Today's Briefing button). Folded "Lock demo scenario" into Marie's existing Demo script row to remove duplication. Promoted Deploy to bold "biggest remaining tech blocker". Added two ticks to the presentation-day checklist (UI polish, vector store rebuild).
   Also surveyed the repo for residue per Leticia's "stuff lying around" note: nothing tracked is dead. __pycache__ everywhere, .pytest_cache, .vscode, .ipynb_checkpoints all already in .gitignore. Deleted local __pycache__ dirs and .pytest_cache as one-off hygiene with no git change. Notebook 01_baseline.ipynb kept on purpose - documented context for the Apr 23 baseline result, no clear reason to delete.
 Human Review: Drove the diagnostic process - confirmed the crash reproduced from a plain python -c invocation independent of Streamlit, ruling out the UI layer. Authorised the destructive `rm -rf data/vector_store/` only after confirming the rebuild script could regenerate from data/raw/ (no Kaggle round-trip needed). Sourced .env into the test shell after Claude flagged the headless test missed dotenv loading. Approved the branch name and commit-by-commit plan before staging. Reviewed both diffs before commit. Rejected one Claude suggestion to add .pytest_cache/ to .gitignore defensively - it has never been tracked, so a "just in case" change is unnecessary churn. Declined the open question on deleting notebooks/01_baseline.ipynb. Branch is local only - not pushed yet pending the deploy session.
+
+---
+
+Date: 2026-05-09
+Team Member: Alex + Marie
+Tool Used: Claude Code (claude-sonnet-4-6) for prompt generation; Claude Design (Anthropic) for deck creation
+Task: Generating a structured prompt for Claude Design to produce the first draft of the MerchAI pitch deck for the course presentation.
+AI Contribution: Claude Code generated a 12-slide structured prompt for Claude Design, covering: title slide with tagline ("The AI Merchandiser Every Walmart Has, But the 500-Store Chain Can't Afford"); problem (3-column layout: late markdowns / replenishment gaps / promo blind spots, with the €2.5M margin improvement hook); solution with a briefing table mockup including example rows with action badges; pipeline flow diagram (LightGBM -> RAG -> Claude -> Guard -> Manager decision); three recommendation types with example action badges (+€X rev / +X units / ↓ €X.XX); hallucination guard with flagged card mockup (2-column: intent check / numeric check); moat (three compounding structural advantages + "Why not OpenAI?" callout); market opportunity (€1.1B TAM, positioning map vs Relex / Blue Yonder / generic BI); unit economics (91% gross margin, break-even at 79 stores, LTV/CAC 188:1); product roadmap (4-phase timeline); team (2x2 grid with track colour-coding); Ask Your Data demo call to action with example Q&A. The prompt specified a dark navy/teal colour palette, clean modern SaaS aesthetic, exact KPIs per slide, and quote placements. Claude Design produced the first-draft deck (12 slides).
+Human Review: Significant edits applied after the first draft. Slides reordered to lead with the market gap before the solution. Unit economics slide restructured to emphasise customer ROI over internal cost. Briefing table mockup replaced with an actual screenshot from the live Streamlit app. Team slide redesigned with track colour-coding. Visual styling, metric placements, and narrative flow substantially revised. Approximately 40-50% of content retained from the first draft. The structured prompt approach saved an estimated 3-4 hours of initial slide structure and content organisation work.
 
 ---
 
@@ -269,6 +295,34 @@ AI Contribution: Claude implemented the feature across 4 files in 4 separate com
   Also updated docs/business_plan/outline.md to document the threshold logic (>+15% = momentum signal worth amplifying) for the business track teammates.
   Also updated docs/project_plan.md to mark Week 2 checkboxes (LLM layer, RAG layer, dashboard UI) as complete based on Justus's Apr 24/26 commits, and noted remaining gaps (Promote This - now done, deployment URL, business deliverables).
 Human Review: Defined the +15% threshold based on business reasoning - strong enough signal to isolate genuine momentum from noise, defensible in Q&A as calibratable per retailer margin targets. Verified the priority order in engine.py (markdown takes precedence over promote, promote over restock) reflects correct merchandising logic. Confirmed the system prompt additions do not contradict the existing hallucination guard instruction. Reviewed all 4 diffs before each commit was pushed.
+
+---
+
+Date: 2026-04-30
+Team Member: Alex
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Writing and structuring the complete business plan (v1.0 to v1.2) as a Python docx generator (build_business_plan.py), covering all 9 sections.
+AI Contribution: Claude drafted the full document structure and all section content, using team-provided data points, architecture details, and financial inputs:
+  - Executive summary framing and market sizing narrative.
+  - Target customer profile table and competitive landscape table.
+  - Four-argument "why not OpenAI?" moat structure.
+  - Full pipeline description (Steps 1-6) mapping the LightGBM to RAG to Claude to guard flow.
+  - Token economics derivation from Claude Sonnet 4.6 API pricing with per-briefing cost breakdown.
+  - All financial scenario tables: gross margin model, operating cost model, break-even analysis, LTV/CAC table.
+  - Hallucination guard architecture description (2-layer: intent check + numeric check).
+  - Prompt engineering exhibit (Section 6.5) including verbatim system prompt and user prompt structure.
+  - Risks and mitigations section (4 risks with mitigation paths).
+  - Python docx-generation framework (python-docx) so the plan regenerates from source after every code change.
+Human Review: Alex provided all key facts (market size estimates, pricing strategy, tech stack details, team roles and contributions), verified all financial calculations against team-derived numbers, confirmed all technical claims against the working codebase, and rejected framing that overstated prototype capabilities. The ROI story (0.5% margin improvement = €2.5M/year = 4.6x ROI), the pricing model (€200-500/store/month), competitive positioning, and break-even target were human decisions made in team discussion. Expression and document structure were AI-assisted; the reasoning and underlying data are the team's own.
+
+---
+
+Date: 2026-04-30
+Team Member: Alex
+Tool Used: Claude (claude.ai)
+Task: Grammar and logic correction on team-authored business plan drafts. The team is composed entirely of non-native English speakers; Claude was used to improve expression while preserving the team's own reasoning.
+AI Contribution: For each business plan section, Claude reviewed team-drafted paragraphs and corrected grammar, syntax, and logical flow. Prompt used: "Please read carefully through the following paragraph and correct it based on grammar and logic. Take the position of a native English speaker who is very familiar with machine learning and knows the jargon." Claude suggested corrections improving clarity and professional register without adding or changing the underlying arguments.
+Human Review: Alex reviewed every suggested change and accepted only those that preserved the intended meaning. All arguments, data points, financial projections, and strategic reasoning were authored by the team; AI corrected expression only. Suggestions that changed meaning or introduced claims not supported by the team's own analysis were rejected.
 
 ---
 
@@ -368,6 +422,15 @@ Tool Used: Claude (claude.ai)
 Task: Expanding the feature set to make the product more AI-native and better aligned with the course curriculum
 AI Contribution: Claude proposed 7 new features: RAG-powered category intelligence, a conversational "Ask Your Data" interface, multimodal competitor monitoring, an agentic execution loop, a hallucination guard layer, confidence & uncertainty display, and a data privacy architecture. Each was linked to a specific course week (Weeks 3-5).
 Human Review: Confirmed RAG layer, hallucination guard, and conversational interface as the three priority additions. Deferred multimodal and agentic mode to nice-to-have status. Merged confidence display into the hallucination guard concept rather than treating it as a standalone feature.
+
+---
+
+Date: 2026-04-22
+Team Member: Leticia
+Tool Used: Claude (claude.ai)
+Task: Startup idea generation and product selection - generating candidate business ideas from the assignment brief and selecting MerchAI from a shortlist.
+AI Contribution: Claude was provided with the full assignment brief, the four evaluation criteria (commercial innovation, technical execution, defensibility, presentation), and the team's skill profile. It generated a set of startup ideas that were commercially viable and technically feasible within a 3-week build window. The team shortlisted three candidates and asked Claude to evaluate which best fit the team profile and rubric. The final shortlist came down to two ideas: (1) a Merchandising Copilot for mid-size retailers and (2) an AI-Powered Due Diligence Assistant for SME acquisitions. Claude outlined the tradeoffs and mapped each idea to the four evaluation criteria.
+Human Review: The team discussed both shortlisted ideas in a team meeting. Selected the Merchandising Copilot because some team members had limited interest in the finance domain, and the retail use case offered more tangible prototyping opportunities on publicly available data (M5 Forecasting dataset). The final product decision, the team name (MerchAI), and the target customer segment (mid-market retailers, 50-500 stores) were human decisions made in team discussion, not AI outputs.
 
 ---
 
