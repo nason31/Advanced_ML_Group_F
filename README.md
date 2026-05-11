@@ -2,6 +2,12 @@
 
 AI-driven daily merchandising copilot for mid-market retailers.
 
+## Live demo
+
+**https://advancedmlgroupf-6rpnzwmnplfct2jjiiy3n6.streamlit.app/**
+
+Select a store, click "Generate Today's Briefing", review the recommendations, and try the Ask Your Data box. First call after a cold container takes ~10–15s; subsequent calls are ~5–10s.
+
 ## Setup
 
 ```bash

@@ -105,7 +105,7 @@
 - [x] Ask Your Data live
 - [x] UI polish complete (ACTION, Impact, Department columns, delta arrows)
 - [x] Vector store rebuilt under chromadb 0.5.0 (382 M5-derived docs, ONNX embeddings)
-- [x] Live Streamlit Cloud URL verified working (May 11)
+- [x] Live Streamlit Cloud URL verified working (May 11): https://advancedmlgroupf-6rpnzwmnplfct2jjiiy3n6.streamlit.app/
 
 > ⚠️ **Risk:** After Day 17 the answer to "should we add X?" is always **no**. A stable demo beats a feature-rich broken one every time.
 
