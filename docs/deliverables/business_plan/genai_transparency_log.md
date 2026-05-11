@@ -32,6 +32,22 @@ Human Review: [what you changed, verified, or rejected]
 Date: 2026-05-11
 Team Member: Justus
 Tool Used: Claude Code (claude-opus-4-7)
+Task: Second cloud-deploy crash session - after the HF offline fix landed and Streamlit Cloud redeployed, the briefing pipeline crashed again on first generation with a different error: "Cannot copy out of meta tensor; no data!". Diagnosed using the systematic-debugging superpowers skill, branched a one-line dependency fix, ready to merge.
+AI Contribution: One commit on branch fix/sentence-transformers-meta-tensor.
+  Diagnostic process (systematic-debugging skill applied):
+  - Phase 1 root cause: Read the full PyTorch error verbatim. The "Cannot copy out of meta tensor" message is raised by torch >=2.6 when .to(device) is called on a tensor that lives on the meta device with no underlying data. Inferred load path: chromadb -> SentenceTransformerEmbeddingFunction -> sentence-transformers SentenceTransformer.__init__ -> .to(device). Inferred cause: newer transformers (>=4.40) uses meta-init for memory efficiency; sentence-transformers 3.0.1 (June 2024) does not materialize meta tensors before .to(); the combination fails on torch >=2.6.
+  - Phase 2 pattern: locally on Justus's machine the embedding loads fine because the model is already cached from the May 9 rebuild; sentence-transformers takes the cached-load fast-path which does not trigger meta-init. Cloud has no cache, hits the broken path.
+  - Phase 3 hypothesis (one): bumping sentence-transformers from 3.0.1 to 3.2.1 fixes the crash because 3.2.0 (Oct 2024) added explicit meta-tensor handling before .to(). Conservative version choice within 3.x to preserve chromadb 0.5.0 compatibility. Alternative considered and rejected: pinning transformers<4.40 - that is symptom suppression, leaves the buggy library in place, fragile against future resolutions.
+  - Phase 4 fix: one-line edit in requirements.txt, 3.0.1 -> 3.2.1.
+  Limitation noted in the process: no easy local repro - local cache hides the bug. Cloud is the test environment; verification cost is one redeploy cycle.
+  Fallback hypothesis if 3.2.1 also fails: chromadb 0.5.0 may not be forward-compat with sentence-transformers 3.2.x. Next step would be bumping chromadb. Not betting on this - chromadb uses the stable SentenceTransformer(model_name, device=device) constructor surface.
+Human Review: Switched the assistant into superpower-skill mode after the second cloud failure to enforce systematic discipline. Reviewed the full Phase 1-3 reasoning before authorising the requirements.txt edit. Authorised the branch + commit + push plan. Awaiting the cloud redeploy result before declaring the fix verified - explicitly NOT claiming success until the live URL renders a briefing.
+
+---
+
+Date: 2026-05-11
+Team Member: Justus
+Tool Used: Claude Code (claude-opus-4-7)
 Task: Streamlit Cloud deploy session - took main from "deploy-ready" to "live and serving briefings". First deploy build succeeded but the briefing pipeline failed on first generation due to a hardcoded offline flag in retriever.py blocking the embedding model download on cold-start. Diagnosed, branched the fix, ready to merge.
 AI Contribution: One commit on branch fix/hf-offline-cloud-deploy (b5fc6e3).
   Deploy walk-through:
