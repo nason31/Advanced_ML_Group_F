@@ -30,6 +30,34 @@ Human Review: [what you changed, verified, or rejected]
 <!-- Append new entries at the TOP (newest-first order). -->
 
 Date: 2026-05-11
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: AI safety review (Prompt 5), plus full UI and guard hardening session before presentation day.
+AI Contribution: Claude ran a structured AI safety review across 8 dimensions (hallucination, overreliance, transparency, privacy, bias, misuse, lack of transparency, data leakage) against the actual codebase, then implemented 7 fixes across 5 files in 6 commits:
+  Safety review findings:
+  - Hallucination: guard covers intent + numeric but not RAG citation accuracy. Deferred.
+  - Overreliance (High): Accept button styled as primary (nudges acceptance), impact values look falsely precise, no disclaimer on cards, confidence labels unexplained.
+  - Transparency (Medium): guard result buried inside Details expander - invisible without clicking.
+  - Privacy: API sends store/SKU/price data to Anthropic; no data handling statement in pitch.
+  - Bias: model trained on 2011-2016 US retail data - not stated in UI.
+  Code fixes (6 commits, 5 files):
+  (1) b14beb6 fix(guard+engine) - Part 2 of architecture review fixes (committed earlier in session, logged in previous entry). Guard: prefer signed pct. Engine: try/except partial failure.
+  (2) f5648a8 feat(ui+engine): inline guard flag, ~ impact estimates, AI disclaimer
+      - app/components/briefing_card.py: guard warning strip shown inline below table row (visible without clicking Details). Added grey "AI-generated recommendation - manager review required" line below each rec card.
+      - src/recommendations/engine.py: all impact badges prefixed with ~ to signal point estimates (~+€78 rev, ~+12 units, ~↓ €2.53).
+  (3) e6b8b3a fix(ui): removed type="primary" from Accept button - both Accept and Reject now equal weight visually.
+  (4) 38037e7 fix(ui): widened SKU column (0.82 -> 1.05) to prevent FOODS_3_073 wrapping. Tightened Action/Accept/Reject column widths.
+  (5) 4df0e8c fix(ui): increased Reject button column to 0.8 (equal to Accept) to prevent "Rejec t" line-break.
+  (6) 119ed94 fix(guard): use last signed pct for numeric check instead of first
+      - Root cause: SYSTEM_PROMPT says "action first, evidence second" so the LLM sometimes writes "-15% discount" before "-61.6% delta". The first signed regex matched the action (-15) not the delta (-61.6), producing ratio=0.24 → false FLAGGED.
+      - Fix: use re.finditer to collect all signed matches, take the last one (always the delta citation per prompt structure). Falls back to first unsigned if no signed matches.
+      - Verified: Cookies 13oz false positive resolved locally. Salsa false positive also resolved. Real hallucinations (+999% vs +20% actual) still caught.
+  Also: applied professor AI Safety Review prompt (Prompt 5) and delivered layer-by-layer risk assessment with severity ratings. Identified overreliance as the highest risk (High) and transparency as Medium. All code-addressable risks resolved in this session.
+Human Review: Questioned whether the numeric guard fix was safer to skip (always check). Claude explained the fix doesn't skip the check - it makes it target the right number. Accepted after understanding. Confirmed last-signed approach is correct given the SYSTEM_PROMPT's action-first structure. Tested each UI change on the live URL after every push. Identified Streamlit Cloud deployment lag - cloud is not picking up engine.py/guard.py changes despite correct code on main. Deferred resolution to Justus (needs full redeploy, not reboot). Accepted that false positive guard flags on the live URL can be explained as "guard being extra cautious" if not resolved before presentation.
+
+---
+
+Date: 2026-05-11
 Team Member: Justus
 Tool Used: Claude Code (claude-opus-4-7)
 Task: Closing the cloud-deploy debugging arc - verify the ONNX migration on the live URL, document the verified deploy, advise on API-key exposure, fix a stale path bug noticed during the README edit.
