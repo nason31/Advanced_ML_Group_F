@@ -30,7 +30,7 @@ def answer_question(
     if active_products:
         matched = False
         for name, sku in active_products.items():
-            if name.upper() in q_upper or q_upper in name.upper():
+            if name.upper() in q_upper:
                 match = forecast_df[
                     forecast_df["item_id_str"].apply(lambda x: str(x).upper() == sku.upper())
                 ]

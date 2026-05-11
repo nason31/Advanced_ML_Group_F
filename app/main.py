@@ -113,10 +113,11 @@ with st.sidebar:
             try:
                 with st.spinner("Thinking..."):
                     current_recs = st.session_state.get("recs", [])
-                    active_products = {
-                        f"{get_product_name(_extract_sku(rec.text))} ({get_dept_name(_extract_sku(rec.text))})": _extract_sku(rec.text)
-                        for rec in current_recs
-                    }
+                    active_products = {}
+                    for rec in current_recs:
+                        sku = _extract_sku(rec.text)
+                        if sku:
+                            active_products[f"{get_product_name(sku)} ({get_dept_name(sku)})"] = sku
                     answer = answer_question(
                         question=question.strip(),
                         store_id=store_id,
