@@ -79,16 +79,15 @@
 |-------|------|--------|-------------|
 | 🟢 Tech | Hallucination guard | ✅ Done | Intent check (54 phrases) + numeric check (cited % vs actual delta). Visible on every card. |
 | 🟢 Tech | Confidence display | ✅ Done | High / Medium / Low badge on every card derived from delta_pct. |
-| 🟢 Tech | Ask Your Data | ✅ Done | Natural language Q&A grounded in live forecast + RAG context. |
-| 🟢 Tech | Deploy to live URL | ❌ Open | Push to Streamlit Cloud, confirm live URL works, add ANTHROPIC_API_KEY to secrets UI. Biggest remaining blocker. |
-| 🟢 Tech | Lock demo scenario | ❌ Open | Pick store (CA_1 recommended), pick date, run once, screenshot the output. Script: generate briefing → review confidence badges + guard checks → accept one → ask a question. |
-| 🟢 Tech | UI polish | ❌ Open | Check app looks professional on a large screen. Font sizes, spacing, card layout. This is a demo to investors - it must not look like a student project. |
-| 🟢 Tech | Model improvement | Optional | WRMSSE currently 0.74 - goal was <0.60. Tune num_leaves, add more lag windows. Only attempt if deployment is confirmed stable. |
+| 🟢 Tech | Ask Your Data | ✅ Done | Natural language Q&A grounded in live forecast + RAG context. RAG corpus expanded to 382 M5 docs on May 7. |
+| 🟢 Tech | UI polish | ✅ Done | ACTION column, Impact column (revenue/units), Department names, confidence badges, delta arrows, Generate Today's Briefing button. May 1 + May 7 sessions. |
+| 🟢 Tech | Deploy to live URL | ❌ Open | Push to Streamlit Cloud, confirm live URL works, add ANTHROPIC_API_KEY to secrets UI. **Biggest remaining tech blocker.** |
+| 🟢 Tech | Model improvement | Optional | WRMSSE currently 0.74 - goal was <0.60. Tune num_leaves, add more lag windows. Only attempt if deployment is confirmed stable and there is slack time. |
 | 🔵 Business | Business plan - unit economics | ❌ Open | Tech notes already in outline.md with exact numbers. Alex to write up the full section - no TBDs allowed at submission. |
 | 🔵 Business | Business plan - moat & safety | ❌ Open | Tech notes already in outline.md with 4 moat arguments and guard specifics. Alex to write up. |
 | 🔵 Business | ROI numbers + competitor research | ❌ Open | 0.5% margin improvement story needs real comparable numbers. Research 1-2 competitors (Relex, Blue Yonder) for the "why not them" answer. |
 | 🟠 Product | Pitch deck design | ❌ Open | Marie owns. Slide order: problem → solution → demo → tech stack → business model → moat → ask. Investor pitch tone, no walls of text. |
-| 🟠 Product | Demo script | ❌ Open | Marie owns. Write exact words for each section. Lock which team member says what. |
+| 🟠 Product | Demo script + scenario lock | ❌ Open | Marie owns. Pick the demo store (CA_1 recommended) and freeze the walk-through: generate briefing → review confidence badges + guard checks → accept one rec → ask a question in Ask Your Data. Write exact words for each section and lock who says what. |
 | ⚪ Whole team | GenAI transparency log | ❌ Ongoing | Everyone logs own sessions. Marie compiles final appendix. LLM judge checks for completeness - no back-filling. |
 | ⚪ Whole team | Finalize pitch deck | ❌ Open | Full design pass. Every slide earns its place. |
 | 🟠 Product | Dry runs | ❌ Open | At least 2 full run-throughs with the live demo cold (fresh browser, no cached state). Time it. |
@@ -106,6 +105,8 @@
 - [x] Hallucination guard demo ready
 - [x] Confidence display live
 - [x] Ask Your Data live
+- [x] UI polish complete (ACTION, Impact, Department columns, delta arrows)
+- [x] Vector store rebuilt under chromadb 0.5.0 (382 M5-derived docs)
 
 > ⚠️ **Risk:** After Day 17 the answer to "should we add X?" is always **no**. A stable demo beats a feature-rich broken one every time.
 
