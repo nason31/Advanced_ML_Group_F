@@ -63,7 +63,7 @@
 - [x] RAG layer returning context
 - [x] Promote This module done
 - [x] Dashboard UI built
-- [ ] Deployed to live URL (config ready, not confirmed live)
+- [x] Deployed to live URL (verified May 11 on Streamlit Cloud after switching to ONNX embeddings)
 - [ ] Business plan draft complete
 - [ ] Pitch deck first draft done
 - [ ] Moat & safety section written
@@ -104,7 +104,8 @@
 - [x] Confidence display live
 - [x] Ask Your Data live
 - [x] UI polish complete (ACTION, Impact, Department columns, delta arrows)
-- [x] Vector store rebuilt under chromadb 0.5.0 (382 M5-derived docs)
+- [x] Vector store rebuilt under chromadb 0.5.0 (382 M5-derived docs, ONNX embeddings)
+- [x] Live Streamlit Cloud URL verified working (May 11)
 
 > ⚠️ **Risk:** After Day 17 the answer to "should we add X?" is always **no**. A stable demo beats a feature-rich broken one every time.
 
