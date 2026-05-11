@@ -40,14 +40,16 @@ def _detect_intent(text: str) -> str | None:
 def _extract_first_pct(text: str) -> float | None:
     """Extract the most likely delta-citation percentage from text.
 
-    Prefers explicitly signed values (+X% / -X%) because the SYSTEM_PROMPT
-    instructs Claude to cite deltas with their sign (e.g. +419.6%).
-    Action suggestions ("reduce by 20%") are usually unsigned and will only
-    be picked up if no signed value exists, reducing false-positive flagging.
+    Picks the LAST signed percentage in the text. Per the SYSTEM_PROMPT,
+    "state the action first, then the evidence" - so the delta citation
+    always appears later in the text than any action suggestion (e.g.
+    "-15% discount" comes before "-61.6% delta"). Taking the last signed
+    value reliably lands on the delta citation rather than the action.
+    Falls back to the first unsigned percentage if no signed value exists.
     """
-    signed = re.search(r"([+-]\d+(?:\.\d+)?)\s*%", text)
-    if signed:
-        return float(signed.group(1))
+    signed_matches = list(re.finditer(r"([+-]\d+(?:\.\d+)?)\s*%", text))
+    if signed_matches:
+        return float(signed_matches[-1].group(1))
     unsigned = re.search(r"(\d+(?:\.\d+)?)\s*%", text)
     return float(unsigned.group(1)) if unsigned else None
 
