@@ -85,41 +85,57 @@ def _compute_confidence(delta_pct: float) -> str:
 
 def _process_seed(seed: dict, store_id: str, summary_text: str, vector_store_dir: Path) -> Rec:
     """Process one seed: RAG retrieve -> LLM reason -> guard check -> Rec."""
-    query = f"{store_id} {seed['cat_id']} {seed['direction']} trend"
-    context_docs = retrieve(query, vector_store_dir, k=3)
+    try:
+        query = f"{store_id} {seed['cat_id']} {seed['direction']} trend"
+        context_docs = retrieve(query, vector_store_dir, k=3)
 
-    rec_text = reason(
-        forecast_summary=summary_text + "\n\n" + seed["focus_line"],
-        context_docs=context_docs,
-    )
+        rec_text = reason(
+            forecast_summary=summary_text + "\n\n" + seed["focus_line"],
+            context_docs=context_docs,
+        )
 
-    guard_out = check(
-        {"text": rec_text},
-        {"direction": seed["direction"], "delta_pct": seed["delta_pct"]},
-    )
+        guard_out = check(
+            {"text": rec_text},
+            {"direction": seed["direction"], "delta_pct": seed["delta_pct"]},
+        )
 
-    if seed["direction"] == "down":
-        rec_type = "markdown"
-    elif seed.get("promote_candidate"):
-        rec_type = "promote"
-    else:
-        rec_type = "restock"
+        if seed["direction"] == "down":
+            rec_type = "markdown"
+        elif seed.get("promote_candidate"):
+            rec_type = "promote"
+        else:
+            rec_type = "restock"
 
-    impact, action_detail = _compute_action(
-        rec_type, seed["delta_pct"], seed.get("baseline", 1.0), seed.get("sell_price", 0.0)
-    )
-    return Rec(
-        rec_type=rec_type,
-        text=rec_text,
-        flagged=guard_out["flagged"],
-        flag_reason=guard_out["reason"],
-        intent_check=guard_out["intent_check"],
-        numeric_check=guard_out["numeric_check"],
-        confidence=_compute_confidence(seed["delta_pct"]),
-        delta_pct=seed["delta_pct"],
-        impact=impact,
-        action_detail=action_detail,
-    )
+        impact, action_detail = _compute_action(
+            rec_type, seed["delta_pct"], seed.get("baseline", 1.0), seed.get("sell_price", 0.0)
+        )
+        return Rec(
+            rec_type=rec_type,
+            text=rec_text,
+            flagged=guard_out["flagged"],
+            flag_reason=guard_out["reason"],
+            intent_check=guard_out["intent_check"],
+            numeric_check=guard_out["numeric_check"],
+            confidence=_compute_confidence(seed["delta_pct"]),
+            delta_pct=seed["delta_pct"],
+            impact=impact,
+            action_detail=action_detail,
+        )
+    except Exception as exc:  # noqa: BLE001
+        rec_type = "markdown" if seed["direction"] == "down" else ("promote" if seed.get("promote_candidate") else "restock")
+        impact, action_detail = _compute_action(
+            rec_type, seed["delta_pct"], seed.get("baseline", 1.0), seed.get("sell_price", 0.0)
+        )
+        return Rec(
+            rec_type=rec_type,
+            text=f"[Recommendation unavailable - {exc}]",
+            flagged=True,
+            flag_reason=f"Pipeline error: {exc}",
+            confidence=_compute_confidence(seed["delta_pct"]),
+            delta_pct=seed["delta_pct"],
+            impact=impact,
+            action_detail=action_detail,
+        )
 
 
 def run_pipeline(

@@ -38,11 +38,18 @@ def _detect_intent(text: str) -> str | None:
 
 
 def _extract_first_pct(text: str) -> float | None:
-    """Extract the first percentage value (signed or unsigned) from text."""
-    match = re.search(r"([+-]?\d+(?:\.\d+)?)\s*%", text)
-    if match:
-        return float(match.group(1))
-    return None
+    """Extract the most likely delta-citation percentage from text.
+
+    Prefers explicitly signed values (+X% / -X%) because the SYSTEM_PROMPT
+    instructs Claude to cite deltas with their sign (e.g. +419.6%).
+    Action suggestions ("reduce by 20%") are usually unsigned and will only
+    be picked up if no signed value exists, reducing false-positive flagging.
+    """
+    signed = re.search(r"([+-]\d+(?:\.\d+)?)\s*%", text)
+    if signed:
+        return float(signed.group(1))
+    unsigned = re.search(r"(\d+(?:\.\d+)?)\s*%", text)
+    return float(unsigned.group(1)) if unsigned else None
 
 
 def check(recommendation: dict, forecast_data: dict) -> dict:
