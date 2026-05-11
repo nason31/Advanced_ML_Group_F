@@ -2,6 +2,12 @@
 
 AI-driven daily merchandising copilot for mid-market retailers.
 
+## Live demo
+
+**https://advancedmlgroupf-6rpnzwmnplfct2jjiiy3n6.streamlit.app/**
+
+Select a store, click "Generate Today's Briefing", review the recommendations, and try the Ask Your Data box. First call after a cold container takes ~10–15s; subsequent calls are ~5–10s.
+
 ## Setup
 
 ```bash
@@ -20,8 +26,8 @@ streamlit run app/main.py
 |------|-------|-----------|
 | Data pipeline + LLM + Recommendations | Leticia | `src/data/`, `src/llm/`, `src/recommendations/`, `app/` |
 | Forecasting + RAG + Scripts | Justus | `src/forecast/`, `src/rag/`, `scripts/`, `notebooks/`, `app/` |
-| Business Plan | Alex | `docs/business_plan/` |
-| Pitch deck + Demo script + GenAI log | Marie | `docs/` |
+| Business Plan | Alex | `docs/deliverables/business_plan/` |
+| Pitch deck + Demo script + GenAI log | Marie | `docs/deliverables/` |
 
 ## Running Tests
 
@@ -35,4 +41,4 @@ See [docs/architecture.md](docs/architecture.md) for the full data-flow diagram.
 
 ## GenAI Transparency Log
 
-All AI-assisted work must be logged in [docs/genai_transparency_log.md](docs/genai_transparency_log.md) - daily, not compiled at the end.
+All AI-assisted work must be logged in [docs/deliverables/business_plan/genai_transparency_log.md](docs/deliverables/business_plan/genai_transparency_log.md) - daily, not compiled at the end.
