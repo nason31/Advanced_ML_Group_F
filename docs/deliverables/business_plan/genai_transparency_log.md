@@ -31,6 +31,31 @@ Human Review: [what you changed, verified, or rejected]
 
 Date: 2026-05-11
 Team Member: Justus
+Tool Used: Claude Code (claude-opus-4-7)
+Task: Closing the cloud-deploy debugging arc - verify the ONNX migration on the live URL, document the verified deploy, advise on API-key exposure, fix a stale path bug noticed during the README edit.
+AI Contribution: Four commits on branch docs/tick-deploy-done.
+  Verification:
+  - Started Streamlit locally, walked through the full UI: Generate Today's Briefing returned 9 recs (3 PROMOTE / 3 RESTOCK / 3 MARKDOWN) on CA_1, switched to CA_2 and TX_1 to confirm all three stores load, expanded Guard checks, ran an Ask Your Data query. All features work end-to-end with ONNX embeddings.
+  - User confirmed the live Streamlit Cloud URL also renders briefings end-to-end after the PR #8 redeploy. Round 4 architectural pivot verified.
+  API-key exposure advice (no code, just guidance):
+  - Flagged that public Streamlit Cloud URLs spend the ANTHROPIC_API_KEY stored in the app's Secrets - every visitor's briefing or Q&A click bills to Justus's Anthropic account. Estimated ~$0.10 per briefing on claude-sonnet-4-6.
+  - Proposed four mitigations ranked by impact: (1) hard spend cap in console.anthropic.com, (2) password gate inside the Streamlit app, (3) pause when not demoing, (4) rotate the key after the presentation.
+  - Justus chose option 1 only (planning €25 cap) and to take the website offline after the presentation. Declined the password gate.
+  Documentation closure (commits on docs/tick-deploy-done):
+  (1) cad4b41 docs(project-plan): ticked Deploy to live URL with the May 11 verification date and the note that ONNX migration unlocked it.
+  (2) 0730a0e docs: added a "Live demo" section to README with the streamlit.app URL and brief instructions, plus appended the URL to the project-plan presentation-day checklist row.
+  (3) 0a8bab9 docs: fixed two stale paths in README left over from the May 11 deliverables reorg - docs/business_plan/ -> docs/deliverables/business_plan/ for Alex's row and docs/genai_transparency_log.md -> docs/deliverables/business_plan/genai_transparency_log.md for the log link. Spotted while editing README, flagged as a follow-up rather than rolled into the URL commit silently.
+  (4) this commit - the consolidated log entry covering this closure session.
+  Local cleanup:
+  - Stopped the local Streamlit process via pkill.
+  - Discarded runtime HNSW binary mods (data_level0.bin + length.bin) that ChromaDB stamps even on read-only queries, so they wouldn't show as bogus diff on main.
+  - Refreshed local main to origin/main before branching docs/tick-deploy-done.
+Human Review: Verified the local UI personally (clicked through all features, both stores, before reporting "all works"). Confirmed the cloud render personally before authorising any documentation tick. Chose option 1 only for API-key protection - declined the password gate as overkill for a class-demo timeframe and accepting "take offline after" as the residual mitigation. Authorised the stale-path fix as a separate commit only after Claude flagged it (rejected the implicit "while-I'm-here" pattern). Requested this closing log entry rather than letting the round-4 entry stand at "awaiting verification".
+
+---
+
+Date: 2026-05-11
+Team Member: Justus
 Tool Used: Claude Code (claude-opus-4-7), with the superpowers:systematic-debugging skill
 Task: Round 4 of the cloud-deploy debugging arc - after the model_kwargs={"low_cpu_mem_usage": False} fix (PR #7) was merged and redeployed, the briefing pipeline crashed with the IDENTICAL "Cannot copy out of meta tensor" error again. Two failed fixes against the same symptom; per the systematic-debugging skill, "if 3+ fixes fail, question the architecture - do not stack another guess". Pivoted: stopped trying to make sentence-transformers + torch work on cloud, and switched the embedding layer to ChromaDB's built-in ONNX-based DefaultEmbeddingFunction instead. Bypasses the entire torch + transformers + sentence-transformers stack.
 AI Contribution: One commit on branch fix/switch-to-onnx-embeddings (864caee).
