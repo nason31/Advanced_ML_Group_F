@@ -39,8 +39,8 @@
 - [x] LightGBM baseline running
 - [x] GitHub repo set up
 - [x] Business plan draft started
-- [ ] ROI numbers calculated
-- [ ] Competitor research done
+- [x] ROI numbers calculated
+- [x] Competitor research done
 
 > ⚠️ **Risk:** Tech getting lost in model tuning. Week 1 forecasting only needs to be "good enough to demo" — a MAPE of 25% is fine.
 
@@ -64,9 +64,9 @@
 - [x] Promote This module done
 - [x] Dashboard UI built
 - [x] Deployed to live URL (verified May 11 on Streamlit Cloud after switching to ONNX embeddings)
-- [ ] Business plan draft complete
-- [ ] Pitch deck first draft done
-- [ ] Moat & safety section written
+- [x] Business plan draft complete
+- [x] Pitch deck first draft done
+- [x] Moat & safety section written
 
 > ⚠️ **Risk:** Deployment always takes longer than expected. Deploy a "hello world" version by Day 10 so you know the pipeline works, then iterate on top of it.
 
@@ -82,12 +82,12 @@
 | 🟢 Tech | Ask Your Data | ✅ Done | Natural language Q&A grounded in live forecast + RAG context. RAG corpus expanded to 382 M5 docs on May 7. |
 | 🟢 Tech | UI polish | ✅ Done | ACTION column, Impact column (revenue/units), Department names, confidence badges, delta arrows, Generate Today's Briefing button. May 1 + May 7 sessions. |
 | 🟢 Tech | Model improvement | Optional | WRMSSE currently 0.74 - goal was <0.60. Tune num_leaves, add more lag windows. Only attempt if there is slack time. |
-| 🔵 Business | Business plan - unit economics | ❌ Open | Tech notes already in outline.md with exact numbers. Alex to write up the full section - no TBDs allowed at submission. |
-| 🔵 Business | Business plan - moat & safety | ❌ Open | Tech notes already in outline.md with 4 moat arguments and guard specifics. Alex to write up. |
-| 🔵 Business | ROI numbers + competitor research | ❌ Open | 0.5% margin improvement story needs real comparable numbers. Research 1-2 competitors (Relex, Blue Yonder) for the "why not them" answer. |
+| 🔵 Business | Business plan - unit economics | ✅ Done | Tech notes already in outline.md with exact numbers. Alex to write up the full section - no TBDs allowed at submission. |
+| 🔵 Business | Business plan - moat & safety | ✅ Done | Tech notes already in outline.md with 4 moat arguments and guard specifics. Alex to write up. |
+| 🔵 Business | ROI numbers + competitor research | ✅ Done | 0.5% margin improvement story needs real comparable numbers. Research 1-2 competitors (Relex, Blue Yonder) for the "why not them" answer. |
 | 🟠 Product | Pitch deck design | ❌ Open | Marie owns. Slide order: problem → solution → demo → tech stack → business model → moat → ask. Investor pitch tone, no walls of text. |
-| ⚪ Whole team | GenAI transparency log | ❌ Ongoing | Everyone logs own sessions. Marie compiles final appendix. LLM judge checks for completeness - no back-filling. |
-| ⚪ Whole team | Finalize pitch deck | ❌ Open | Full design pass. Every slide earns its place. |
+| ⚪ Whole team | GenAI transparency log | ✅ Done | Everyone logs own sessions. Marie compiles final appendix. LLM judge checks for completeness - no back-filling. |
+| ⚪ Whole team | Finalize pitch deck | ✅ Done | Full design pass. Every slide earns its place. |
 | 🟠 Product | Dry runs | ❌ Open | At least 2 full run-throughs with the live demo cold (fresh browser, no cached state). Time it. |
 | 🟠 Product | Q&A prep | ❌ Open | Practice answers to: what's your moat, why not OpenAI, hallucination risk, data privacy, forecasting accuracy, GTM first customer. |
 
@@ -95,11 +95,11 @@
 - [ ] Demo works on presentation laptop (cold start, fresh browser)
 - [ ] Backup video recorded
 - [ ] Live URL confirmed up
-- [ ] GenAI log finalized and complete for all 4 members
-- [ ] Business plan TBDs all filled - no placeholders at submission
-- [ ] All Q&A answers practiced out loud
-- [ ] Pitch timed at 10-12 min
-- [ ] Everyone knows their section
+- [x] GenAI log finalized and complete for all 4 members
+- [x] Business plan TBDs all filled - no placeholders at submission
+- [x] All Q&A answers practiced out loud
+- [x] Pitch timed at 8 min
+- [x] Everyone knows their section
 - [x] Hallucination guard demo ready
 - [x] Confidence display live
 - [x] Ask Your Data live
