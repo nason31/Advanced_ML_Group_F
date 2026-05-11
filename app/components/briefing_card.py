@@ -77,7 +77,7 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
             f"<span style='color:#374151;font-size:0.85em;font-weight:600;'>{rec.impact or '-'}</span>",
             unsafe_allow_html=True,
         )
-        if cols[7].button("Accept", key=f"accept_{i}", type="primary", use_container_width=True):
+        if cols[7].button("Accept", key=f"accept_{i}", use_container_width=True):
             actions.append((i, "accept"))
         if cols[8].button("Reject", key=f"reject_{i}", use_container_width=True):
             actions.append((i, "reject"))
