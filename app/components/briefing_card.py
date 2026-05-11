@@ -37,7 +37,7 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
     actions: list[tuple[int, str]] = []
 
     # Table header
-    h = st.columns([0.6, 1.05, 1.1, 0.85, 0.92, 0.76, 0.9, 0.75, 0.65])
+    h = st.columns([0.6, 1.05, 1.1, 0.85, 0.92, 0.76, 0.9, 0.8, 0.8])
     for col, label in zip(h, ["Type", "SKU", "Product", "Department", "Confidence", "Delta", "Action", "", ""]):
         col.markdown(f"<span style='font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.05em;'>{label}</span>", unsafe_allow_html=True)
     st.markdown("<hr style='margin:4px 0 8px 0;border-color:#e5e7eb;'>", unsafe_allow_html=True)
@@ -52,7 +52,7 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
         delta_color = "#166534" if rec.delta_pct > 0 else "#9b1c1c"
         delta_bg = "#dcfce7" if rec.delta_pct > 0 else "#fee2e2"
 
-        cols = st.columns([0.6, 1.05, 1.1, 0.85, 0.92, 0.76, 0.9, 0.75, 0.65])
+        cols = st.columns([0.6, 1.05, 1.1, 0.85, 0.92, 0.76, 0.9, 0.8, 0.8])
 
         cols[0].markdown(
             f"<span style='background:{bg};color:{fg};padding:2px 8px;border-radius:4px;"
