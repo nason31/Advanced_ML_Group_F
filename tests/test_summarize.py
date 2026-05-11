@@ -22,48 +22,49 @@ def _toy_forecast_df() -> pd.DataFrame:
         {"id": "a4", "item_id": 4, "dept_id": 3, "cat_id": 2,
          "item_id_str": "HOBBIES_1_234", "dept_id_str": "HOBBIES_1", "cat_id_str": "HOBBIES",
          "predicted": 1.4, "baseline": 2.0, "delta_pct": -0.30, "direction": "down"},
-        # above baseline, smallest delta (up)
+        # above baseline, strong upward delta (PROMOTE bucket >50%)
         {"id": "a5", "item_id": 5, "dept_id": 4, "cat_id": 3,
          "item_id_str": "HOUSEHOLD_2_145", "dept_id_str": "HOUSEHOLD_2", "cat_id_str": "HOUSEHOLD",
-         "predicted": 7.7, "baseline": 7.0, "delta_pct": 0.10, "direction": "up"},
+         "predicted": 11.2, "baseline": 7.0, "delta_pct": 0.60, "direction": "up"},
     ])
 
 
 def test_summarize_returns_tuple_of_text_and_seeds():
-    summary, seeds = summarize_forecast(_toy_forecast_df(), top_k=3)
+    summary, seeds = summarize_forecast(_toy_forecast_df(), bucket_size=3)
     assert isinstance(summary, str)
     assert isinstance(seeds, list)
 
 
 def test_summarize_filters_below_min_baseline():
     """SKUs with baseline < 1.0 should not appear in seeds regardless of delta."""
-    _, seeds = summarize_forecast(_toy_forecast_df(), top_k=3, min_baseline=1.0)
+    _, seeds = summarize_forecast(_toy_forecast_df(), bucket_size=3, min_baseline=1.0)
     seed_items = {s["item_id"] for s in seeds}
     assert "FOODS_3_low" not in seed_items
     assert "HOBBIES_1_low" not in seed_items
 
 
 def test_summarize_ranks_by_absolute_delta():
-    """Top-3 order should be 40%, -30%, 10% by absolute magnitude."""
-    _, seeds = summarize_forecast(_toy_forecast_df(), top_k=3)
-    assert [s["item_id"] for s in seeds] == ["FOODS_3_827", "HOBBIES_1_234", "HOUSEHOLD_2_145"]
-    assert [s["direction"] for s in seeds] == ["up", "down", "up"]
+    """Seeds come out PROMOTE -> RESTOCK -> MARKDOWN (bucket order), one per bucket."""
+    _, seeds = summarize_forecast(_toy_forecast_df(), bucket_size=3)
+    assert [s["item_id"] for s in seeds] == ["HOUSEHOLD_2_145", "FOODS_3_827", "HOBBIES_1_234"]
+    assert [s["direction"] for s in seeds] == ["up", "up", "down"]
 
 
 def test_summarize_top_k_limits_output():
-    _, seeds = summarize_forecast(_toy_forecast_df(), top_k=2)
-    assert len(seeds) == 2
+    """bucket_size=1 caps each bucket at 1 item; with one item per bucket we get 3 total."""
+    _, seeds = summarize_forecast(_toy_forecast_df(), bucket_size=1)
+    assert len(seeds) == 3
 
 
 def test_summary_text_cites_human_readable_skus():
-    summary, _ = summarize_forecast(_toy_forecast_df(), top_k=3)
+    summary, _ = summarize_forecast(_toy_forecast_df(), bucket_size=3)
     assert "FOODS_3_827" in summary
     assert "HOBBIES_1_234" in summary
 
 
 def test_seed_contains_guard_check_fields():
     """Each seed must carry the 'direction' key that src.llm.guard.check() reads."""
-    _, seeds = summarize_forecast(_toy_forecast_df(), top_k=3)
+    _, seeds = summarize_forecast(_toy_forecast_df(), bucket_size=3)
     for seed in seeds:
         assert "direction" in seed
         assert seed["direction"] in {"up", "down"}
@@ -73,6 +74,6 @@ def test_seed_contains_guard_check_fields():
 
 def test_summarize_empty_when_all_below_baseline():
     df = _toy_forecast_df().head(2)  # only the two low-baseline rows
-    summary, seeds = summarize_forecast(df, top_k=3, min_baseline=1.0)
+    summary, seeds = summarize_forecast(df, bucket_size=3, min_baseline=1.0)
     assert seeds == []
     assert "No SKUs" in summary

@@ -30,7 +30,7 @@ def _toy_forecast_with_names(store_id: str, date: str, data_dir: Path) -> pd.Dat
          "predicted": 1.4, "baseline": 2.0, "delta_pct": -0.30, "direction": "down"},
         {"id": "a5", "item_id": 5, "dept_id": 4, "cat_id": 3,
          "item_id_str": "HOUSEHOLD_2_145", "dept_id_str": "HOUSEHOLD_2", "cat_id_str": "HOUSEHOLD",
-         "predicted": 7.7, "baseline": 7.0, "delta_pct": 0.10, "direction": "up"},
+         "predicted": 8.4, "baseline": 7.0, "delta_pct": 0.20, "direction": "up"},
     ])
 
 
@@ -51,9 +51,10 @@ def test_run_pipeline_returns_three_recs_with_expected_shapes(monkeypatch, tmp_p
     assert len(recs) == 3
     assert all(isinstance(r, Rec) for r in recs)
 
-    # Mapping from direction to rec_type: up -> restock, down -> markdown.
+    # Seeds come out PROMOTE -> RESTOCK -> MARKDOWN bucket order.
+    # Toy data: two RESTOCK (40%, 20%) then one MARKDOWN (-30%).
     rec_types = [r.rec_type for r in recs]
-    assert rec_types == ["restock", "markdown", "restock"]
+    assert rec_types == ["restock", "restock", "markdown"]
 
 
 def test_run_pipeline_guard_flags_contradictory_reasoner_output(monkeypatch, tmp_path):
@@ -65,11 +66,12 @@ def test_run_pipeline_guard_flags_contradictory_reasoner_output(monkeypatch, tmp
                         lambda forecast_summary, context_docs: "Apply markdown to clear stock.")
 
     recs = run_pipeline("CA_1", "2024-01-01", tmp_path, tmp_path)
-    # Uptrending SKUs (1st and 3rd) should be flagged; downtrending 2nd should not.
+    # Both RESTOCK SKUs (recs 0 and 1) are uptrending - markdown text should flag them.
+    # The MARKDOWN SKU (rec 2) is downtrending - markdown text is consistent, no flag.
     assert recs[0].flagged is True
-    assert recs[1].flagged is False
-    assert recs[2].flagged is True
-    assert "Markdown" in recs[0].flag_reason or "markdown" in recs[0].flag_reason.lower()
+    assert recs[1].flagged is True
+    assert recs[2].flagged is False
+    assert "markdown" in recs[0].flag_reason.lower()
 
 
 def test_run_pipeline_no_seeds_returns_empty(monkeypatch, tmp_path):
