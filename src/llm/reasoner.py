@@ -1,14 +1,18 @@
 import os
+import threading
 import anthropic
 from src.llm.prompts import SYSTEM_PROMPT, build_user_prompt
 
 _client: anthropic.Anthropic | None = None
+_client_lock = threading.Lock()
 
 
 def _get_client() -> anthropic.Anthropic:
     global _client
     if _client is None:
-        _client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+        with _client_lock:
+            if _client is None:
+                _client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     return _client
 
 

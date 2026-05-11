@@ -1,4 +1,6 @@
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
 
 from src.forecast.serve import forecast_with_names
@@ -66,6 +68,45 @@ def _compute_confidence(delta_pct: float) -> str:
     return "Low"
 
 
+def _process_seed(seed: dict, store_id: str, summary_text: str, vector_store_dir: Path) -> Rec:
+    """Process one seed: RAG retrieve -> LLM reason -> guard check -> Rec."""
+    query = f"{store_id} {seed['cat_id']} {seed['direction']} trend"
+    context_docs = retrieve(query, vector_store_dir, k=3)
+
+    rec_text = reason(
+        forecast_summary=summary_text + "\n\n" + seed["focus_line"],
+        context_docs=context_docs,
+    )
+
+    guard_out = check(
+        {"text": rec_text},
+        {"direction": seed["direction"], "delta_pct": seed["delta_pct"]},
+    )
+
+    if seed["direction"] == "down":
+        rec_type = "markdown"
+    elif seed.get("promote_candidate"):
+        rec_type = "promote"
+    else:
+        rec_type = "restock"
+
+    impact, action_detail = _compute_action(
+        rec_type, seed["delta_pct"], seed.get("baseline", 1.0), seed.get("sell_price", 0.0)
+    )
+    return Rec(
+        rec_type=rec_type,
+        text=rec_text,
+        flagged=guard_out["flagged"],
+        flag_reason=guard_out["reason"],
+        intent_check=guard_out["intent_check"],
+        numeric_check=guard_out["numeric_check"],
+        confidence=_compute_confidence(seed["delta_pct"]),
+        delta_pct=seed["delta_pct"],
+        impact=impact,
+        action_detail=action_detail,
+    )
+
+
 def run_pipeline(
     store_id: str,
     date: str,
@@ -75,46 +116,16 @@ def run_pipeline(
     """Orchestrate forecast -> summarize -> RAG -> LLM -> guard -> Rec list.
 
     Selects up to 3 candidates per bucket (PROMOTE / RESTOCK / MARKDOWN),
-    runs each through RAG + LLM + guard, and returns the full Rec list.
+    runs each through RAG + LLM + guard in parallel, and returns the full Rec list.
     """
     forecast_df = forecast_with_names(store_id, date, data_dir)
     summary_text, rec_seeds = summarize_forecast(forecast_df)
 
-    recs: list[Rec] = []
-    for seed in rec_seeds:
-        query = f"{store_id} {seed['cat_id']} {seed['direction']} trend"
-        context_docs = retrieve(query, vector_store_dir, k=3)
+    if not rec_seeds:
+        return []
 
-        rec_text = reason(
-            forecast_summary=summary_text + "\n\n" + seed["focus_line"],
-            context_docs=context_docs,
-        )
-
-        guard_out = check(
-            {"text": rec_text},
-            {"direction": seed["direction"], "delta_pct": seed["delta_pct"]},
-        )
-
-        if seed["direction"] == "down":
-            rec_type = "markdown"
-        elif seed.get("promote_candidate"):
-            rec_type = "promote"
-        else:
-            rec_type = "restock"
-        impact, action_detail = _compute_action(
-            rec_type, seed["delta_pct"], seed.get("baseline", 1.0), seed.get("sell_price", 0.0)
-        )
-        recs.append(Rec(
-            rec_type=rec_type,
-            text=rec_text,
-            flagged=guard_out["flagged"],
-            flag_reason=guard_out["reason"],
-            intent_check=guard_out["intent_check"],
-            numeric_check=guard_out["numeric_check"],
-            confidence=_compute_confidence(seed["delta_pct"]),
-            delta_pct=seed["delta_pct"],
-            impact=impact,
-            action_detail=action_detail,
-        ))
+    process = partial(_process_seed, store_id=store_id, summary_text=summary_text, vector_store_dir=vector_store_dir)
+    with ThreadPoolExecutor(max_workers=len(rec_seeds)) as executor:
+        recs = list(executor.map(process, rec_seeds))
 
     return recs

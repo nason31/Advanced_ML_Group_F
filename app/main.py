@@ -54,12 +54,18 @@ with st.sidebar:
             st.error("Vector store is empty. Run `python scripts/build_rag_corpus.py` first.")
         else:
             try:
-                with st.spinner("Running pipeline..."):
+                with st.status("Analysing products...", expanded=True) as status:
+                    st.write("Running forecast, retrieving context, and reasoning with Claude...")
                     recs = run_pipeline(
                         store_id=store_id,
                         date=str(date),
                         data_dir=DATA_DIR,
                         vector_store_dir=VECTOR_DIR,
+                    )
+                    status.update(
+                        label=f"Briefing ready - {len(recs)} recommendation{'s' if len(recs) != 1 else ''}",
+                        state="complete",
+                        expanded=False,
                     )
                 st.session_state.recs = recs
                 st.session_state.chat_history = []
