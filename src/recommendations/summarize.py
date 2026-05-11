@@ -13,6 +13,8 @@ Buckets:
 """
 from __future__ import annotations
 
+import math
+
 import pandas as pd
 
 PROMOTE_THRESHOLD  =  50.0   # delta_pct %
@@ -41,7 +43,7 @@ def _build_seed(row: pd.Series, promote_candidate: bool) -> dict:
         "direction":        row["direction"],
         "delta_pct":        pct,
         "baseline":         float(row["baseline"]),
-        "sell_price":       float(row.get("sell_price", 0.0)),
+        "sell_price":       float(p) if (p := row.get("sell_price", 0.0)) and not math.isnan(float(p)) else 0.0,
         "promote_candidate": promote_candidate,
         "focus_line": (
             f"Focus this recommendation on SKU {item} in category {cat}: "

@@ -1,3 +1,4 @@
+import csv
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -17,11 +18,29 @@ from src.recommendations.engine import run_pipeline
 
 DATA_DIR = Path("data/processed")
 VECTOR_DIR = Path("data/vector_store")
+AUDIT_FILE = Path("data/audit_trail.csv")
 
 st.set_page_config(page_title="MerchAI Daily Briefing", layout="wide")
 
+
+def _load_audit() -> list[dict]:
+    if not AUDIT_FILE.exists():
+        return []
+    with AUDIT_FILE.open(newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def _append_audit(entry: dict) -> None:
+    write_header = not AUDIT_FILE.exists()
+    with AUDIT_FILE.open("a", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["action", "text", "timestamp"])
+        if write_header:
+            writer.writeheader()
+        writer.writerow(entry)
+
+
 if "audit_log" not in st.session_state:
-    st.session_state.audit_log = []
+    st.session_state.audit_log = _load_audit()
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
@@ -132,10 +151,12 @@ else:
     actions = render_table(recs)
     for idx, action in actions:
         rec = recs[idx]
-        st.session_state.audit_log.append({
+        entry = {
             "action": action,
             "text": rec.text[:80],
             "timestamp": datetime.now().strftime("%H:%M:%S"),
-        })
+        }
+        st.session_state.audit_log.append(entry)
+        _append_audit(entry)
 
 render_audit(st.session_state.audit_log)
