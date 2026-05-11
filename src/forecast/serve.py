@@ -78,6 +78,7 @@ def forecast_store(
     X = latest[FEATURE_COLS].to_numpy()
     latest["predicted"] = model.predict(X)
     latest["baseline"] = latest["rolling_mean_28"].replace(0, np.nan)
+    # delta_pct is a fraction here (0.40 = 40%). summarize.py multiplies by 100 for thresholds.
     latest["delta_pct"] = (latest["predicted"] - latest["baseline"]) / latest["baseline"]
     latest["delta_pct"] = latest["delta_pct"].fillna(0.0)
     latest["direction"] = np.where(latest["delta_pct"] >= 0, "up", "down")

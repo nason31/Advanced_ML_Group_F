@@ -2,7 +2,7 @@ from pathlib import Path
 
 from src.forecast.serve import forecast_with_names
 from src.llm.prompts import QA_SYSTEM_PROMPT, build_qa_prompt
-from src.llm.reasoner import _get_client
+from src.llm.reasoner import get_client
 from src.rag.retriever import retrieve
 from src.recommendations.summarize import summarize_forecast
 
@@ -49,7 +49,7 @@ def answer_question(
 
     context_docs = retrieve(rag_query, vector_store_dir, k=6)
 
-    client = _get_client()
+    client = get_client()
     response = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=256,

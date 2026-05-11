@@ -69,7 +69,8 @@ def summarize_forecast(
     if df.empty:
         return "No SKUs met the minimum baseline threshold for forecasting.", []
 
-    # delta_pct from serve.py is a fraction; convert to % for thresholds
+    # delta_pct from serve.py is a fraction (0.40); convert to % for threshold comparisons.
+    # seed["delta_pct"] below is already in % (multiplied by 100 in _build_seed).
     df["delta_pct_pct"] = df["delta_pct"] * 100
 
     promote  = (df[df["delta_pct_pct"] >  PROMOTE_THRESHOLD]

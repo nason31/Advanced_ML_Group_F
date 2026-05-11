@@ -7,7 +7,7 @@ _client: anthropic.Anthropic | None = None
 _client_lock = threading.Lock()
 
 
-def _get_client() -> anthropic.Anthropic:
+def get_client() -> anthropic.Anthropic:
     global _client
     if _client is None:
         with _client_lock:
@@ -18,7 +18,7 @@ def _get_client() -> anthropic.Anthropic:
 
 def reason(forecast_summary: str, context_docs: list[str]) -> str:
     """Call Claude to produce merchandising recommendations with citations."""
-    client = _get_client()
+    client = get_client()
     response = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=1024,
