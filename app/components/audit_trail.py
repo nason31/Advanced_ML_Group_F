@@ -1,3 +1,5 @@
+import html as _html
+
 import streamlit as st
 
 
@@ -24,11 +26,13 @@ def render_audit(log: list[dict]) -> None:
         )
         action = entry["action"].upper()
         action_color = "#166534" if action == "ACCEPT" else "#9b1c1c"
+        # Escape text so LLM markdown (##, **, newlines) cannot break the HTML layout
+        clean_text = _html.escape(entry["text"][:80].replace("\n", " ").replace("\r", ""))
         st.markdown(
             f"<div style='padding:3px 0;'>"
             f"<strong style='color:{action_color};'>{action}</strong>"
             f"{flag_html}"
-            f" &mdash; <span style='color:#374151;'>{entry['text'][:80]}</span>"
+            f" &mdash; <span style='color:#374151;'>{clean_text}</span>"
             f" <span style='color:#9ca3af;font-size:0.85em;'>({entry['timestamp']})</span>"
             f"</div>",
             unsafe_allow_html=True,
