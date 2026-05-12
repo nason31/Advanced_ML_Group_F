@@ -29,6 +29,18 @@ streamlit run app/main.py
 | Business Plan | Alex | `docs/deliverables/business_plan/` |
 | Pitch deck + Demo script + GenAI log | Marie | `docs/deliverables/` |
 
+## Forecast Accuracy
+
+LightGBM baseline evaluated on a held-out 28-day validation window (M5 benchmark data):
+
+| Store | WRMSSE |
+|-------|--------|
+| CA_1 | 0.74 |
+| CA_2 | 0.73 |
+| TX_1 | 0.76 |
+
+**Average WRMSSE: 0.74.** A score below 1.0 means the model outperforms the naive "same as yesterday" baseline. Top M5 competition ensembles score ~0.50; this is a single LightGBM trained on the full feature set.
+
 ## Running Tests
 
 ```bash

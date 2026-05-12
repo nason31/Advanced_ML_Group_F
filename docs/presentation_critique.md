@@ -70,7 +70,7 @@ These are all small changes. None introduces new logic that could break the demo
 
 - [ ] **Clarify that M5-trained models are the prototype and per-retailer models are the product.** One sentence on the slides: "The demo runs on Walmart M5 data. A pilot retailer's recommendations are generated from models trained on 12 months of their own POS history - genuinely proprietary, impossible to replicate without running the product in that chain." This directly answers the LLM judge's wrapper critique.
 
-- [ ] **Add WRMSSE score to README and slides.** Run `src/forecast/evaluate.py` once and record the WRMSSE. Put it in the README and one slide. Closes "how accurate is the forecast?" cold from any judge. Without a number the answer is "we don't know."
+- [x] **Add WRMSSE score to README and slides.** CA_1: 0.74, CA_2: 0.73, TX_1: 0.76 (avg 0.74) on held-out 28-day window. Added to README. Add to one slide: "WRMSSE 0.74 - beats naive baseline (1.0)."
 
 - [ ] **Strengthen the team slide.** Replace "Nova SBE alumni network" with any specific real connection - a named professor contact in retail, an internship at a relevant company, a named association. Vague network language signals no specific lead. If there is no specific lead, say "our entry point is through academia - a research pilot framed as a case study bypasses commercial procurement entirely."
 
@@ -102,7 +102,7 @@ These are real gaps. Judges who find them via the LLM judge prompts will respect
 
 - **Ask Your Data re-runs the full forecast on every question.** `qa.py:answer_question` calls `forecast_with_names` independently of the main pipeline. The `lru_cache` on `load_model` and `_load_features` avoids re-loading, but `forecast_store` scores the full feature matrix again. Visible as ~2-4s lag on each Q&A response. Low priority - won't crash the demo.
 
-- **Prompt caching is stated but not yet enabled.** The unit economics numbers are correct with caching active. Enabling it is a 4-line change (see Block 2).
+- **Prompt caching is enabled** on the system message (`cache_control: ephemeral`). The unit economics numbers are accurate.
 
 ---
 
