@@ -6,7 +6,7 @@
 
 | Target market | Revenue range | Pricing model | Gross margin | LLM cost / day | Customer ROI |
 |---------------|---------------|---------------|--------------|----------------|--------------|
-| 50-500 store retailers | €100M - €2B | €200-500 / store / mo | 75%+ | €0.10 - 0.30 | ~4x on €500M retailer |
+| 50-500 store retailers | €100M - €2B | €200-500 / store / mo | 72% | €0.10 - 0.30 | ~4x on €500M retailer |
 
 ---
 
