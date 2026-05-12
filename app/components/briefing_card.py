@@ -126,9 +126,9 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
             dcol1.caption(f"**Intent check:** {_live_guard['intent_check'] or 'n/a'}")
             dcol2.caption(f"**Numeric check:** {_live_guard['numeric_check'] or 'n/a'}")
             if getattr(rec, "context_docs", None):
-                with st.expander("Context Sources", expanded=False):
-                    for j, doc in enumerate(rec.context_docs, 1):
-                        st.caption(f"**Source {j}:** {doc}")
+                st.markdown("<span style='font-size:0.8em;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;'>Context Sources</span>", unsafe_allow_html=True)
+                for j, doc in enumerate(rec.context_docs, 1):
+                    st.caption(f"**Source {j}:** {doc}")
 
         st.markdown("<hr style='margin:6px 0;border-color:#f3f4f6;'>", unsafe_allow_html=True)
 
