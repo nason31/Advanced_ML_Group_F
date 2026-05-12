@@ -28,6 +28,8 @@ Done
 
 - [ ] **Update Screens to new UI.** 
 
+- [ ] **Finalize Appendix after finishing slides to be presented.** 
+
 ---
 
 ## Block 4 - Demo Day Preparation (Owner: Marie)
