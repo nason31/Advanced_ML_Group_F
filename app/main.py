@@ -133,6 +133,7 @@ with st.sidebar:
                         data_dir=DATA_DIR,
                         vector_store_dir=VECTOR_DIR,
                         active_products=active_products or None,
+                        chat_history=st.session_state.chat_history or None,
                     )
                 st.session_state.chat_history.append({
                     "question": question,

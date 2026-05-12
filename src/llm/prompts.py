@@ -42,15 +42,24 @@ def build_qa_prompt(
     forecast_summary: str,
     context_docs: list[str],
     product_lookup: dict[str, str] | None = None,
+    chat_history: list[dict] | None = None,
 ) -> str:
     context = "\n\n".join(f"- {doc}" for doc in context_docs)
     lookup_section = ""
     if product_lookup:
         lines = "\n".join(f"- {name} = {sku}" for name, sku in product_lookup.items())
         lookup_section = f"## Product Name to SKU Mapping\n{lines}\n\n"
+    history_section = ""
+    if chat_history:
+        turns = chat_history[-3:]
+        lines = "\n".join(
+            f"Manager: {t['question']}\nYou: {t['answer']}" for t in turns
+        )
+        history_section = f"## Recent Conversation\n{lines}\n\n"
     return (
         f"{lookup_section}"
         f"## Current Forecast Summary\n{forecast_summary}\n\n"
         f"## Historical Context\n{context}\n\n"
+        f"{history_section}"
         f"## Manager Question\n{question}"
     )

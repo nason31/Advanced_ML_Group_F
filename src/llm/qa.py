@@ -15,6 +15,7 @@ def answer_question(
     data_dir: Path,
     vector_store_dir: Path,
     active_products: dict[str, str] | None = None,
+    chat_history: list[dict] | None = None,
 ) -> dict:
     """Answer a natural language question grounded in forecast data and RAG context.
 
@@ -63,7 +64,7 @@ def answer_question(
         system=QA_SYSTEM_PROMPT,
         messages=[{
             "role": "user",
-            "content": build_qa_prompt(question, summary_text, context_docs, active_products),
+            "content": build_qa_prompt(question, summary_text, context_docs, active_products, chat_history),
         }],
     )
     answer_text = response.content[0].text
