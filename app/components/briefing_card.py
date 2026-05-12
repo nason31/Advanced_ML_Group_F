@@ -5,9 +5,9 @@ from src.data.product_names import get_dept_name, get_product_name
 from src.recommendations.engine import Rec
 
 _CONFIDENCE_STYLE = {
-    "High":   ("#dcfce7", "#166534"),
-    "Medium": ("#fef9c3", "#854d0e"),
-    "Low":    ("#fee2e2", "#9b1c1c"),
+    "Strong":   ("#dcfce7", "#166534"),
+    "Moderate": ("#fef9c3", "#854d0e"),
+    "Weak":     ("#fee2e2", "#9b1c1c"),
 }
 
 _TYPE_STYLE = {
@@ -38,12 +38,12 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
 
     # Table header
     h = st.columns([0.6, 1.05, 1.1, 0.85, 0.92, 0.76, 0.9, 0.8, 0.8])
-    for col, label in zip(h, ["Type", "SKU", "Product", "Department", "Confidence", "Delta", "Action", "", ""]):
+    for col, label in zip(h, ["Type", "SKU", "Product", "Department", "Signal", "Delta", "Action", "", ""]):
         col.markdown(f"<span style='font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.05em;'>{label}</span>", unsafe_allow_html=True)
     st.markdown("<hr style='margin:4px 0 8px 0;border-color:#e5e7eb;'>", unsafe_allow_html=True)
 
     for i, rec in enumerate(recs):
-        sku = _extract_sku(rec.text)
+        sku = rec.sku or _extract_sku(rec.text)
         product_name = get_product_name(sku)
         dept_name = get_dept_name(sku)
         conf_bg, conf_fg = _CONFIDENCE_STYLE.get(rec.confidence, ("#f3f4f6", "#374151"))
@@ -77,8 +77,26 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
             f"<span style='color:#374151;font-size:0.85em;font-weight:600;'>{rec.impact or '-'}</span>",
             unsafe_allow_html=True,
         )
-        if cols[7].button("Accept", key=f"accept_{i}", use_container_width=True):
-            actions.append((i, "accept"))
+
+        # Accept: Weak Signal requires a confirmation step before logging
+        if rec.confidence == "Weak":
+            pending_key = f"confirm_pending_{i}"
+            if pending_key not in st.session_state:
+                st.session_state[pending_key] = False
+            if cols[7].button("Accept", key=f"accept_{i}", use_container_width=True):
+                st.session_state[pending_key] = True
+            if st.session_state.get(pending_key):
+                wcols = st.columns([2, 1, 1, 3])
+                wcols[0].warning("Weak signal - confirm?")
+                if wcols[1].button("Confirm", key=f"confirm_{i}", type="primary"):
+                    actions.append((i, "accept"))
+                    st.session_state[pending_key] = False
+                if wcols[2].button("Cancel", key=f"cancel_{i}"):
+                    st.session_state[pending_key] = False
+        else:
+            if cols[7].button("Accept", key=f"accept_{i}", use_container_width=True):
+                actions.append((i, "accept"))
+
         if cols[8].button("Reject", key=f"reject_{i}", use_container_width=True):
             actions.append((i, "reject"))
 
@@ -100,12 +118,11 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
             dcol1, dcol2 = st.columns(2)
             dcol1.caption(f"**Intent check:** {rec.intent_check or 'n/a'}")
             dcol2.caption(f"**Numeric check:** {rec.numeric_check or 'n/a'}")
+            if rec.context_docs:
+                with st.expander("Context Sources", expanded=False):
+                    for j, doc in enumerate(rec.context_docs, 1):
+                        st.caption(f"**Source {j}:** {doc}")
 
-        st.markdown(
-            "<p style='font-size:0.75em;color:#9ca3af;margin:2px 0 4px 0;'>"
-            "AI-generated recommendation - manager review required</p>",
-            unsafe_allow_html=True,
-        )
         st.markdown("<hr style='margin:6px 0;border-color:#f3f4f6;'>", unsafe_allow_html=True)
 
     return actions

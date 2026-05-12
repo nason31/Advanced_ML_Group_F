@@ -33,7 +33,7 @@ def _load_audit() -> list[dict]:
 def _append_audit(entry: dict) -> None:
     write_header = not AUDIT_FILE.exists()
     with AUDIT_FILE.open("a", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["action", "text", "timestamp"])
+        writer = csv.DictWriter(f, fieldnames=["action", "text", "timestamp", "guard_flagged"])
         if write_header:
             writer.writeheader()
         writer.writerow(entry)
@@ -115,8 +115,8 @@ with st.sidebar:
                     current_recs = st.session_state.get("recs", [])
                     active_products = {}
                     for rec in current_recs:
-                        sku = _extract_sku(rec.text)
-                        if sku:
+                        sku = rec.sku or _extract_sku(rec.text)
+                        if sku and sku != "-":
                             active_products[f"{get_product_name(sku)} ({get_dept_name(sku)})"] = sku
                     answer = answer_question(
                         question=question.strip(),
@@ -131,7 +131,18 @@ with st.sidebar:
             except Exception as exc:  # noqa: BLE001
                 st.error(f"Q&A failed: {exc}")
 
+    st.divider()
+    st.caption(
+        "All recommendations are AI-generated. The manager retains final authority on every action. "
+        "Decisions are logged to the audit trail."
+    )
+
 # ── Main area ──────────────────────────────────────────────────────────────────
+st.info(
+    "Demo mode: running on historical Walmart (M5) benchmark data. "
+    "Recommendations are illustrative - not calibrated to European retail."
+)
+
 st.markdown(
     "<span style='font-size:0.85em;font-weight:600;color:#6b7280;text-transform:uppercase;"
     "letter-spacing:0.08em;'>MerchAI</span>",
@@ -156,6 +167,7 @@ else:
             "action": action,
             "text": rec.text[:80],
             "timestamp": datetime.now().strftime("%H:%M:%S"),
+            "guard_flagged": rec.flagged,
         }
         st.session_state.audit_log.append(entry)
         _append_audit(entry)

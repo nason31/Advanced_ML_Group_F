@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import partial
 from pathlib import Path
 
@@ -18,10 +18,12 @@ class Rec:
     flag_reason: str
     intent_check: str = ""
     numeric_check: str = ""
-    confidence: str = ""  # "High" | "Medium" | "Low"
+    confidence: str = ""  # "Strong" | "Moderate" | "Weak"
     delta_pct: float = 0.0
     impact: str = ""         # short action badge, e.g. "↑ €2.24" / "+ 42 units" / "↓ €1.91"
     action_detail: str = ""  # full sentence shown inside Details expander
+    sku: str = ""
+    context_docs: list[str] = field(default_factory=list)
 
 
 def _compute_action(rec_type: str, delta_pct: float, baseline: float, sell_price: float, horizon: int = 7) -> tuple[str, str]:
@@ -68,19 +70,19 @@ def _compute_action(rec_type: str, delta_pct: float, baseline: float, sell_price
 
 
 def _compute_confidence(delta_pct: float) -> str:
-    """Derive confidence from forecast signal strength.
+    """Derive signal strength label from forecast delta magnitude.
 
     Thresholds reflect retail merchandising intuition:
-    - High (>100%): very strong momentum, act with confidence
-    - Medium (30-100%): solid signal, reasonable to act
-    - Low (<30%): weak signal, manager should verify before acting
+    - Strong (>100%): very strong momentum, act with confidence
+    - Moderate (30-100%): solid signal, reasonable to act
+    - Weak (<30%): weak signal, manager should verify before acting
     """
     abs_delta = abs(delta_pct)
     if abs_delta > 100:
-        return "High"
+        return "Strong"
     elif abs_delta > 30:
-        return "Medium"
-    return "Low"
+        return "Moderate"
+    return "Weak"
 
 
 def _process_seed(seed: dict, store_id: str, summary_text: str, vector_store_dir: Path) -> Rec:
@@ -120,6 +122,8 @@ def _process_seed(seed: dict, store_id: str, summary_text: str, vector_store_dir
             delta_pct=seed["delta_pct"],
             impact=impact,
             action_detail=action_detail,
+            sku=seed["item_id"],
+            context_docs=context_docs,
         )
     except Exception as exc:  # noqa: BLE001
         rec_type = "markdown" if seed["direction"] == "down" else ("promote" if seed.get("promote_candidate") else "restock")
@@ -135,6 +139,7 @@ def _process_seed(seed: dict, store_id: str, summary_text: str, vector_store_dir
             delta_pct=seed["delta_pct"],
             impact=impact,
             action_detail=action_detail,
+            sku=seed["item_id"],
         )
 
 
@@ -156,7 +161,7 @@ def run_pipeline(
         return []
 
     process = partial(_process_seed, store_id=store_id, summary_text=summary_text, vector_store_dir=vector_store_dir)
-    with ThreadPoolExecutor(max_workers=len(rec_seeds)) as executor:
+    with ThreadPoolExecutor(max_workers=min(3, len(rec_seeds))) as executor:
         recs = list(executor.map(process, rec_seeds))
 
     return recs

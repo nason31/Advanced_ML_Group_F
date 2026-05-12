@@ -1,4 +1,5 @@
 import os
+import time
 import threading
 import anthropic
 from src.llm.prompts import SYSTEM_PROMPT, build_user_prompt
@@ -19,10 +20,21 @@ def get_client() -> anthropic.Anthropic:
 def reason(forecast_summary: str, context_docs: list[str]) -> str:
     """Call Claude to produce merchandising recommendations with citations."""
     client = get_client()
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1024,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": build_user_prompt(forecast_summary, context_docs)}],
-    )
-    return response.content[0].text
+    for attempt in range(3):
+        try:
+            response = client.messages.create(
+                model="claude-sonnet-4-6",
+                max_tokens=1024,
+                system=[{"type": "text", "text": SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}}],
+                messages=[{"role": "user", "content": build_user_prompt(forecast_summary, context_docs)}],
+            )
+            return response.content[0].text
+        except anthropic.RateLimitError:
+            if attempt == 2:
+                raise
+            time.sleep(2 ** attempt)
+        except anthropic.APIStatusError as exc:
+            if attempt == 2 or exc.status_code < 500:
+                raise
+            time.sleep(2 ** attempt)
+    raise RuntimeError("reason() retry loop exited without returning")
