@@ -560,3 +560,16 @@ AI Contribution: Claude read every production file and delivered a structured te
       - Added _plain() helper using re.sub to remove ## headers and ** / _ bold/italic markers, then replaces newlines with spaces, then html.escape(). Entries now render as single clean lines with no markdown bleed. Also confirmed that the live app had not hot-reloaded the component file during the debug iteration - advised user to restart the local process.
   Also performed a git pull --rebase before the final push because a teammate had committed to origin/main in the interim.
 Human Review: Confirmed both issues were real gaps (not theoretical) by inspecting the live URL and the audit trail screenshot showing broken multi-line entries with raw ## and ** markers. Directed the second audit trail fix after the first iteration (html.escape only) still showed broken layout in a screenshot. Confirmed the Q&A guard should run intent check only - not the numeric check - based on understanding the QA prompt's deliberate number translation instruction. Reviewed all diffs before each commit. Verified 19/19 tests still passing after changes.
+
+---
+
+Date: 2026-05-12
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Debugging Q&A "string indices" error on the live deployment and adding multi-turn conversation context to the Q&A assistant.
+AI Contribution: Claude investigated a TypeError ("string indices must be integers, not 'str'") appearing in the live Streamlit Cloud deployment when users submitted Q&A questions. Root cause analysis across qa.py, main.py, prompts.py, briefing_card.py, retriever.py, guard.py, and serve.py. Conclusion: the live deployment had not redeployed after the previous session's fix (which changed answer_question return type from str to dict); the stale deployment still returned a plain string while the updated main.py expected result["answer"]. Fix was a Streamlit Cloud redeploy to pick up commit e952d19. No code change was needed for this issue.
+  Second issue identified from live demo screenshots: the Q&A assistant had no memory of prior conversation turns. Each call to answer_question was completely stateless - it received only the current question and forecast data. As shown in the screenshot, asking "how many more should I restock? 10?" immediately after discussing tortilla chips produced "the question is too vague" because Claude had no context about the previous turn. Fix committed in 95e2534 across 3 files:
+  - src/llm/prompts.py: build_qa_prompt() now accepts an optional chat_history parameter. The last 3 turns are formatted as a "## Recent Conversation" block (Manager: / You: pairs) inserted between the Historical Context and Manager Question sections. Capped at 3 turns to keep prompt size bounded.
+  - src/llm/qa.py: answer_question() signature extended with chat_history: list[dict] | None = None, passed through to build_qa_prompt().
+  - app/main.py: call site passes st.session_state.chat_history or None so the running conversation is always available to Claude.
+Human Review: Identified the no-context limitation from live demo screenshots (follow-up questions failing). Confirmed 3-turn window is sufficient for demo purposes without bloating the prompt. Reviewed diff before push. Verified the tortilla chips follow-up scenario would now resolve correctly.
