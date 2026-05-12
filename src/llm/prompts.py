@@ -14,7 +14,7 @@ Output rules:
 Recommendation types:
 - MARKDOWN: SKU trending down - recommend a specific discount % to clear stock before it ages.
 - RESTOCK: SKU trending up moderately - recommend replenishment to avoid stockout.
-- PROMOTE THIS: SKU trending up strongly (>+15% above baseline) - recommend a specific channel action
+- PROMOTE THIS: SKU trending up strongly (>+50% above baseline) - recommend a specific channel action
   (e.g. end-cap placement, weekly flyer feature, BOGO offer) to amplify the momentum."""
 
 
