@@ -24,8 +24,6 @@ Done
 
 ## Block 3 - Presentation / Slides (Owner: Marie)
 
-- [ ] **Add one architecture diagram.** Six-stage pipeline: POS data → LightGBM → RAG retrieval → Claude → Hallucination guard → Briefing UI. Label which stages are deterministic vs. LLM. Show where the audit trail writes. One diagram replaces three pages of prose for a judge seeing the product for the first time.
-
 - [ ] **Update Slide to new bussiness plan.** 
 
 - [ ] **Update Screens to new UI.** 
