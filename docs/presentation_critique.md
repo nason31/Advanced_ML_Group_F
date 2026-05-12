@@ -66,9 +66,9 @@ These are all small changes. None introduces new logic that could break the demo
 
 - [ ] **Add one architecture diagram.** Six-stage pipeline: POS data → LightGBM → RAG retrieval → Claude → Hallucination guard → Briefing UI. Label which stages are deterministic vs. LLM. Show where the audit trail writes. One diagram replaces three pages of prose for a judge seeing the product for the first time.
 
-- [ ] **Reframe the moat as a timeline.** One slide or section: "Year 1 we build the data asset. Year 2 we close the retraining loop. Year 3 the moat is structural." More credible than claiming current defensibility from a session-state CSV.
+- [x] **Reframe the moat as a timeline.** One slide or section: "Year 1 we build the data asset. Year 2 we close the retraining loop. Year 3 the moat is structural." More credible than claiming current defensibility from a session-state CSV.
 
-- [ ] **Clarify that M5-trained models are the prototype and per-retailer models are the product.** One sentence on the slides: "The demo runs on Walmart M5 data. A pilot retailer's recommendations are generated from models trained on 12 months of their own POS history - genuinely proprietary, impossible to replicate without running the product in that chain." This directly answers the LLM judge's wrapper critique.
+- [x] **Clarify that M5-trained models are the prototype and per-retailer models are the product.** One sentence on the slides: "The demo runs on Walmart M5 data. A pilot retailer's recommendations are generated from models trained on 12 months of their own POS history - genuinely proprietary, impossible to replicate without running the product in that chain." This directly answers the LLM judge's wrapper critique.
 
 - [ ] **Add WRMSSE score to README and slides.** Run `src/forecast/evaluate.py` once and record the WRMSSE. Put it in the README and one slide. Closes "how accurate is the forecast?" cold from any judge. Without a number the answer is "we don't know."
 
