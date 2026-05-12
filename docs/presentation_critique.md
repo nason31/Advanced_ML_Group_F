@@ -30,11 +30,14 @@ Text changes only. Each item is one paragraph or one table row. Do these first -
 
 - [x] **Add one sentence on liability.** "MerchAI is a recommendation tool; the manager retains final authority on every action. The audit trail records which recommendations were accepted and what outcomes followed." This belongs in the defensibility or risk section.
 
-- [ ] **Add the M5-to-real-data transition paragraph.** The RAG corpus contains SNAP benefit patterns - a US government programme that does not exist in DACH or Iberia. Add explicitly: "The M5-derived corpus is replaced with EU-specific seasonal calendar events and retailer promotional history during the design partner pilot. LightGBM is retrained on 12 months of the chain's own POS data. This takes two days of data engineering per retailer."
-
 - [x] **Add churn sensitivity row to the LTV table.** One extra row: LTV at 30% churn = €270,000 / 0.30 = €900,000 per customer. Still healthy. Showing this proves you have stress-tested your own numbers.
 
 - [x] **Fix the ChromaDB self-hosting claim in the cost table.** State the actual deployment (committed vector store files read by PersistentClient) and its real cost. The current "zero marginal cost self-hosted" claim is inconsistent with a Streamlit Cloud deployment.
+
+- [ ] Section 2.2 still says "High/Medium/Low confidence" but the code now uses "Strong/Moderate/Weak Signal" after the Block 2 rename. The plan is one version behind.
+- [ ] Section 5.2 describes the numeric check as "pulls the first cited percentage" - but the code was rewritten to scan all percentages. Minor but a judge cross-checking code vs plan will notice.
+
+- [ ] Section 4.1 deletes the cached scenario and changes the bullet to: "Prompt caching is a planned optimisation; the system prompt will be expanded to exceed the 1,024-token minimum required to activate Anthropic's caching tier."
 
 ---
 
@@ -62,17 +65,13 @@ These are all small changes. None introduces new logic that could break the demo
 
 ---
 
-## Block 3 - Presentation / Slides (Owner: Marie + Alex)
+## Block 3 - Presentation / Slides (Owner: Marie)
 
 - [ ] **Add one architecture diagram.** Six-stage pipeline: POS data → LightGBM → RAG retrieval → Claude → Hallucination guard → Briefing UI. Label which stages are deterministic vs. LLM. Show where the audit trail writes. One diagram replaces three pages of prose for a judge seeing the product for the first time.
 
-- [x] **Reframe the moat as a timeline.** One slide or section: "Year 1 we build the data asset. Year 2 we close the retraining loop. Year 3 the moat is structural." More credible than claiming current defensibility from a session-state CSV.
+- [ ] **Update Slide to new bussiness plan.** 
 
-- [x] **Clarify that M5-trained models are the prototype and per-retailer models are the product.** One sentence on the slides: "The demo runs on Walmart M5 data. A pilot retailer's recommendations are generated from models trained on 12 months of their own POS history - genuinely proprietary, impossible to replicate without running the product in that chain." This directly answers the LLM judge's wrapper critique.
-
-- [x] **Add WRMSSE score to README and slides.** CA_1: 0.74, CA_2: 0.73, TX_1: 0.76 (avg 0.74) on held-out 28-day window. Added to README. Add to one slide: "WRMSSE 0.74 - beats naive baseline (1.0)."
-
-- [ ] **Strengthen the team slide.** Replace "Nova SBE alumni network" with any specific real connection - a named professor contact in retail, an internship at a relevant company, a named association. Vague network language signals no specific lead. If there is no specific lead, say "our entry point is through academia - a research pilot framed as a case study bypasses commercial procurement entirely."
+- [ ] **Update Screens to new UI.** 
 
 ---
 
