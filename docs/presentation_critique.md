@@ -12,32 +12,7 @@ Owner abbreviations: L = Leticia | J = Justus | A = Alex | M = Marie
 
 ## Block 1 - Business Plan Fixes (Owner: Alex)
 
-Text changes only. Each item is one paragraph or one table row. Do these first - the LLM judge reads the business plan directly and these are the specific vulnerabilities it will probe.
-
-- [x] **Add cash burn curve and funding ask.** The financial model proves break-even at 79 stores but never shows how long it takes to get there or how much capital is needed. Add a Month 0-12 cash position view. Formula: €21,500/month x 7 months to first revenue = ~€150k minimum burn before break-even.
-
-- [x] **Replace "91% gross margin" with "72% fully-loaded gross margin."** Silicon-only margin is 91%. Fully loaded (adding implementation time per retailer + customer success + support) is 70-75%. Use the correct figure and add one sentence explaining the distinction. The LLM judge will specifically cross-check this number.
-
-- [x] **Add SAP, Oracle, and Salesforce to the competitive table.** These three own the ERP relationships of every retailer in the target segment and have active AI roadmaps (SAP Joule, Salesforce Einstein). The mitigation is defensible - they require IT-heavy enterprise deployments that a Head of Buying cannot approve as a 90-day experiment - but it must appear in the document. Its absence is the most visible gap in the competitive section.
-
-- [x] **Acknowledge the 0.5% ROI claim is borrowed from enterprise deployments.** Nextail, McKinsey, and BCG references are from fully integrated enterprise tools. Add one sentence: "We anchor at the floor of independently published ranges; the 90-day pilot business review will produce the first MerchAI-specific data point." Honest framing is stronger than an unqualified claim.
-
-- [x] **Fix the Phase 1 CAC calculation.** €8,000 values founder time at zero. Two engineers at 50% of their time for 6 months = ~€30,000 in allocated salary cost alone. Revise to €20,000-€35,000. The LTV/CAC ratio is still healthy at 43-75:1 - no need to hide this.
-
-- [x] **Fix the moat argument hierarchy.** The four moat claims are given equal weight but have radically different defensibility. Reorder: (1) decision audit trail - the real compounding moat; (2) workflow embedment - genuine switching cost once habituated; (3) per-retailer trained models - proprietary once real data is ingested; (4) guard and RAG - product quality, not defensibility. The guard is not a moat. Say so explicitly.
-
-- [x] **Address the cold-start problem in the moat section.** One sentence: "The free pilot is how we acquire the first customer before the moat exists. Day 1 of the pilot is Day 1 of proprietary data collection." This closes the circular argument (moat needs customers, customers need moat) that a judge will raise.
-
-- [x] **Add one sentence on liability.** "MerchAI is a recommendation tool; the manager retains final authority on every action. The audit trail records which recommendations were accepted and what outcomes followed." This belongs in the defensibility or risk section.
-
-- [x] **Add churn sensitivity row to the LTV table.** One extra row: LTV at 30% churn = €270,000 / 0.30 = €900,000 per customer. Still healthy. Showing this proves you have stress-tested your own numbers.
-
-- [x] **Fix the ChromaDB self-hosting claim in the cost table.** State the actual deployment (committed vector store files read by PersistentClient) and its real cost. The current "zero marginal cost self-hosted" claim is inconsistent with a Streamlit Cloud deployment.
-
-- [ ] Section 2.2 still says "High/Medium/Low confidence" but the code now uses "Strong/Moderate/Weak Signal" after the Block 2 rename. The plan is one version behind.
-- [ ] Section 5.2 describes the numeric check as "pulls the first cited percentage" - but the code was rewritten to scan all percentages. Minor but a judge cross-checking code vs plan will notice.
-
-- [ ] Section 4.1 deletes the cached scenario and changes the bullet to: "Prompt caching is a planned optimisation; the system prompt will be expanded to exceed the 1,024-token minimum required to activate Anthropic's caching tier."
+Done
 
 ---
 
