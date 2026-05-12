@@ -39,15 +39,16 @@ def _append_audit(entry: dict) -> None:
         writer.writerow(entry)
 
 
+_PIPELINE_VERSION = "v6"  # bump when engine/guard/badge logic changes to force fresh recs
+
+if st.session_state.get("_pipeline_version") != _PIPELINE_VERSION:
+    st.session_state.pop("recs", None)
+    st.session_state["_pipeline_version"] = _PIPELINE_VERSION
+
 if "audit_log" not in st.session_state:
     st.session_state.audit_log = _load_audit()
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-# Flush recs cached before the sku/context_docs fields were added
-if "recs" in st.session_state:
-    recs_cached = st.session_state.recs
-    if recs_cached and not hasattr(recs_cached[0], "sku"):
-        del st.session_state["recs"]
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:

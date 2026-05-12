@@ -37,24 +37,23 @@ def _detect_intent(text: str) -> str | None:
     return best if scores[best] > 0 else None
 
 
-def _extract_first_pct(text: str, actual_delta: float | None = None) -> float | None:
-    """Extract the most likely delta-citation percentage from text.
+def _actual_delta_cited(text: str, actual_delta: float, rel_tol: float = 0.10) -> bool:
+    """Return True if actual_delta appears anywhere in text within rel_tol relative tolerance.
 
-    When actual_delta is provided, picks the signed percentage closest in
-    magnitude to the known forecast delta - this handles cases where Claude
-    also cites RAG context percentages (e.g. category YoY growth) that are
-    numerically far from the SKU-level delta. Falls back to the last signed
-    value when only one candidate exists, and to the first unsigned percentage
-    when no signed value is found.
+    Scans every percentage in the text regardless of order. A citation is valid
+    if abs(cited - actual) / actual <= rel_tol (10% relative). This handles
+    rounding (e.g. +47% for +47.2%) and is immune to the order Claude chooses
+    to mention numbers - RAG context percentages (+15% threshold, +19% YoY)
+    are typically far from the SKU-level delta and will not satisfy the check.
     """
-    signed_matches = list(re.finditer(r"([+-]\d+(?:\.\d+)?)\s*%", text))
-    if not signed_matches:
-        unsigned = re.search(r"(\d+(?:\.\d+)?)\s*%", text)
-        return float(unsigned.group(1)) if unsigned else None
-    values = [float(m.group(1)) for m in signed_matches]
-    if actual_delta is not None and len(values) > 1:
-        return min(values, key=lambda v: abs(abs(v) - abs(actual_delta)))
-    return values[-1]
+    a = abs(actual_delta)
+    if a < 1.0:
+        return True  # delta too small to check meaningfully
+    for m in re.finditer(r"([+-]?\d+(?:\.\d+)?)\s*%", text):
+        v = abs(float(m.group(1)))
+        if abs(v - a) / a <= rel_tol:
+            return True
+    return False
 
 
 def check(recommendation: dict, forecast_data: dict) -> dict:
@@ -62,13 +61,13 @@ def check(recommendation: dict, forecast_data: dict) -> dict:
 
     Runs two checks:
     1. Intent check - does Claude's recommended action contradict the forecast direction?
-    2. Numeric check - does the first percentage Claude cites match the actual delta_pct?
+    2. Numeric check - does the actual delta_pct appear anywhere in the recommendation text?
 
     Returns a dict with:
       flagged: bool
       reason: str          - human-readable explanation if flagged
       intent_check: str    - PASS / FLAGGED / SKIP (no intent detected)
-      numeric_check: str   - PASS / FLAGGED / SKIP (no percentage found)
+      numeric_check: str   - PASS / FLAGGED / SKIP (delta too small to check)
     """
     rec_text = recommendation.get("text", "")
     direction = forecast_data.get("direction", "")
@@ -96,20 +95,16 @@ def check(recommendation: dict, forecast_data: dict) -> dict:
         else:
             intent_result = f"PASS - {intent} aligns with {direction} trend"
 
-    # --- Check 2: numeric plausibility ---
-    if actual_delta is not None:
-        cited_pct = _extract_first_pct(rec_text, actual_delta=actual_delta)
-        if cited_pct is not None:
-            # Allow 2x tolerance - catches fabricated numbers, not rounding
-            ratio = abs(cited_pct) / max(abs(actual_delta), 0.1)
-            if ratio > 2.0 or ratio < 0.5:
-                flagged = True
-                numeric_result = "FLAGGED"
-                reasons.append(
-                    f"Cited {cited_pct:+.1f}% but data shows {actual_delta:+.1f}% - possible hallucination."
-                )
-            else:
-                numeric_result = f"PASS - cited {cited_pct:+.1f}%, data {actual_delta:+.1f}%"
+    # --- Check 2: is the actual delta cited anywhere in the text? ---
+    if actual_delta is not None and abs(actual_delta) >= 1.0:
+        if _actual_delta_cited(rec_text, actual_delta):
+            numeric_result = f"PASS - {actual_delta:+.1f}% found in text"
+        else:
+            flagged = True
+            numeric_result = "FLAGGED"
+            reasons.append(
+                f"Forecast delta {actual_delta:+.1f}% not cited in recommendation - possible hallucination."
+            )
 
     return {
         "flagged": flagged,

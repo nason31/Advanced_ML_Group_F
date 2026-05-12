@@ -2,6 +2,7 @@ import re
 
 import streamlit as st
 from src.data.product_names import get_dept_name, get_product_name
+from src.llm.guard import check as _guard_check
 from src.recommendations.engine import Rec
 
 _CONFIDENCE_STYLE = {
@@ -78,6 +79,12 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
             unsafe_allow_html=True,
         )
 
+        # Re-run guard with current code so stale cached Recs never show wrong flags
+        _direction = "down" if rec.rec_type == "markdown" else "up"
+        _live_guard = _guard_check({"text": rec.text}, {"direction": _direction, "delta_pct": rec.delta_pct})
+        _flagged = _live_guard["flagged"]
+        _flag_reason = _live_guard["reason"]
+
         # Accept: Weak Signal requires a confirmation step before logging
         if rec.confidence == "Weak":
             pending_key = f"confirm_pending_{i}"
@@ -100,28 +107,28 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
         if cols[8].button("Reject", key=f"reject_{i}", use_container_width=True):
             actions.append((i, "reject"))
 
-        if rec.flagged:
+        if _flagged:
             st.markdown(
                 f"<div style='background:#fef9c3;border:1px solid #f59e0b;border-radius:4px;"
                 f"padding:5px 12px;margin:2px 0 4px 0;font-size:0.82em;color:#854d0e;'>"
-                f"⚠ Guard flagged: {rec.flag_reason}</div>",
+                f"⚠ Guard flagged: {_flag_reason}</div>",
                 unsafe_allow_html=True,
             )
 
         with st.expander(f"Details - {product_name}", expanded=False):
             if rec.action_detail:
                 st.info(rec.action_detail)
-            if rec.flagged:
-                st.warning(f"Guard flagged: {rec.flag_reason}")
+            if _flagged:
+                st.warning(f"Guard flagged: {_flag_reason}")
             st.markdown(_clean_text(rec.text))
             st.divider()
             dcol1, dcol2 = st.columns(2)
-            dcol1.caption(f"**Intent check:** {rec.intent_check or 'n/a'}")
-            dcol2.caption(f"**Numeric check:** {rec.numeric_check or 'n/a'}")
+            dcol1.caption(f"**Intent check:** {_live_guard['intent_check'] or 'n/a'}")
+            dcol2.caption(f"**Numeric check:** {_live_guard['numeric_check'] or 'n/a'}")
             if getattr(rec, "context_docs", None):
-                with st.expander("Context Sources", expanded=False):
-                    for j, doc in enumerate(rec.context_docs, 1):
-                        st.caption(f"**Source {j}:** {doc}")
+                st.markdown("<span style='font-size:0.8em;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;'>Context Sources</span>", unsafe_allow_html=True)
+                for j, doc in enumerate(rec.context_docs, 1):
+                    st.caption(f"**Source {j}:** {doc}")
 
         st.markdown("<hr style='margin:6px 0;border-color:#f3f4f6;'>", unsafe_allow_html=True)
 

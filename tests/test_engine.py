@@ -61,9 +61,11 @@ def test_run_pipeline_guard_flags_contradictory_reasoner_output(monkeypatch, tmp
     """If the LLM returns 'markdown' text for an uptrending SKU, guard must flag it."""
     monkeypatch.setattr(engine_mod, "forecast_with_names", _toy_forecast_with_names)
     monkeypatch.setattr(engine_mod, "retrieve", _fake_retrieve)
-    # Always recommend a markdown, regardless of the actual trend.
+    # Always recommend a markdown with the delta cited, regardless of the actual trend.
+    # Including -30% ensures the numeric check passes for the downtrending SKU (delta=-30%)
+    # while the intent check still flags the uptrending ones.
     monkeypatch.setattr(engine_mod, "reason",
-                        lambda forecast_summary, context_docs: "Apply markdown to clear stock.")
+                        lambda forecast_summary, context_docs: "Apply a -30% markdown to clear stock.")
 
     recs = run_pipeline("CA_1", "2024-01-01", tmp_path, tmp_path)
     # Both RESTOCK SKUs (recs 0 and 1) are uptrending - markdown text should flag them.
