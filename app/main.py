@@ -39,7 +39,7 @@ def _append_audit(entry: dict) -> None:
         writer.writerow(entry)
 
 
-_PIPELINE_VERSION = "v5"  # bump when engine/guard/badge logic changes to force fresh recs
+_PIPELINE_VERSION = "v6"  # bump when engine/guard/badge logic changes to force fresh recs
 
 if st.session_state.get("_pipeline_version") != _PIPELINE_VERSION:
     st.session_state.pop("recs", None)
