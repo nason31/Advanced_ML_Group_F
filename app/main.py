@@ -109,6 +109,8 @@ with st.sidebar:
             st.write(turn["question"])
         with st.chat_message("assistant"):
             st.write(turn["answer"])
+            if turn.get("flagged"):
+                st.warning(f"Guard flagged: {turn.get('flag_reason', '')}")
 
     question = st.chat_input("e.g. Why is Maple Syrup selling so much?")
     if question:
@@ -124,7 +126,7 @@ with st.sidebar:
                         sku = rec.sku or _extract_sku(rec.text)
                         if sku and sku != "-":
                             active_products[f"{get_product_name(sku)} ({get_dept_name(sku)})"] = sku
-                    answer = answer_question(
+                    result = answer_question(
                         question=question.strip(),
                         store_id=store_id,
                         date=str(date),
@@ -132,7 +134,12 @@ with st.sidebar:
                         vector_store_dir=VECTOR_DIR,
                         active_products=active_products or None,
                     )
-                st.session_state.chat_history.append({"question": question, "answer": answer})
+                st.session_state.chat_history.append({
+                    "question": question,
+                    "answer": result["answer"],
+                    "flagged": result["flagged"],
+                    "flag_reason": result["flag_reason"],
+                })
                 st.rerun()
             except Exception as exc:  # noqa: BLE001
                 st.error(f"Q&A failed: {exc}")
