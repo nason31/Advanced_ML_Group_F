@@ -143,10 +143,7 @@ with st.sidebar:
     )
 
 # ── Main area ──────────────────────────────────────────────────────────────────
-st.info(
-    "Demo mode: running on historical Walmart (M5) benchmark data. "
-    "Recommendations are illustrative - not calibrated to European retail."
-)
+st.info("Demo mode: running on historical Walmart (M5) benchmark data.")
 
 st.markdown(
     "<span style='font-size:0.85em;font-weight:600;color:#6b7280;text-transform:uppercase;"

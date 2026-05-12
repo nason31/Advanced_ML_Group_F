@@ -37,21 +37,24 @@ def _detect_intent(text: str) -> str | None:
     return best if scores[best] > 0 else None
 
 
-def _extract_first_pct(text: str) -> float | None:
+def _extract_first_pct(text: str, actual_delta: float | None = None) -> float | None:
     """Extract the most likely delta-citation percentage from text.
 
-    Picks the LAST signed percentage in the text. Per the SYSTEM_PROMPT,
-    "state the action first, then the evidence" - so the delta citation
-    always appears later in the text than any action suggestion (e.g.
-    "-15% discount" comes before "-61.6% delta"). Taking the last signed
-    value reliably lands on the delta citation rather than the action.
-    Falls back to the first unsigned percentage if no signed value exists.
+    When actual_delta is provided, picks the signed percentage closest in
+    magnitude to the known forecast delta - this handles cases where Claude
+    also cites RAG context percentages (e.g. category YoY growth) that are
+    numerically far from the SKU-level delta. Falls back to the last signed
+    value when only one candidate exists, and to the first unsigned percentage
+    when no signed value is found.
     """
     signed_matches = list(re.finditer(r"([+-]\d+(?:\.\d+)?)\s*%", text))
-    if signed_matches:
-        return float(signed_matches[-1].group(1))
-    unsigned = re.search(r"(\d+(?:\.\d+)?)\s*%", text)
-    return float(unsigned.group(1)) if unsigned else None
+    if not signed_matches:
+        unsigned = re.search(r"(\d+(?:\.\d+)?)\s*%", text)
+        return float(unsigned.group(1)) if unsigned else None
+    values = [float(m.group(1)) for m in signed_matches]
+    if actual_delta is not None and len(values) > 1:
+        return min(values, key=lambda v: abs(abs(v) - abs(actual_delta)))
+    return values[-1]
 
 
 def check(recommendation: dict, forecast_data: dict) -> dict:
@@ -95,7 +98,7 @@ def check(recommendation: dict, forecast_data: dict) -> dict:
 
     # --- Check 2: numeric plausibility ---
     if actual_delta is not None:
-        cited_pct = _extract_first_pct(rec_text)
+        cited_pct = _extract_first_pct(rec_text, actual_delta=actual_delta)
         if cited_pct is not None:
             # Allow 2x tolerance - catches fabricated numbers, not rounding
             ratio = abs(cited_pct) / max(abs(actual_delta), 0.1)

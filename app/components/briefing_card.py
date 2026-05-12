@@ -38,7 +38,7 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
 
     # Table header
     h = st.columns([0.6, 1.05, 1.1, 0.85, 0.92, 0.76, 0.9, 0.8, 0.8])
-    for col, label in zip(h, ["Type", "SKU", "Product", "Department", "Signal", "Delta", "Action", "", ""]):
+    for col, label in zip(h, ["Type", "SKU", "Product", "Department", "Signal", "Delta", "Rec. Action", "", ""]):
         col.markdown(f"<span style='font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.05em;'>{label}</span>", unsafe_allow_html=True)
     st.markdown("<hr style='margin:4px 0 8px 0;border-color:#e5e7eb;'>", unsafe_allow_html=True)
 
