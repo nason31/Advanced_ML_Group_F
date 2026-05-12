@@ -43,6 +43,11 @@ if "audit_log" not in st.session_state:
     st.session_state.audit_log = _load_audit()
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+# Flush recs cached before the sku/context_docs fields were added
+if "recs" in st.session_state:
+    recs_cached = st.session_state.recs
+    if recs_cached and not hasattr(recs_cached[0], "sku"):
+        del st.session_state["recs"]
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:

@@ -43,7 +43,7 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
     st.markdown("<hr style='margin:4px 0 8px 0;border-color:#e5e7eb;'>", unsafe_allow_html=True)
 
     for i, rec in enumerate(recs):
-        sku = rec.sku or _extract_sku(rec.text)
+        sku = getattr(rec, "sku", None) or _extract_sku(rec.text)
         product_name = get_product_name(sku)
         dept_name = get_dept_name(sku)
         conf_bg, conf_fg = _CONFIDENCE_STYLE.get(rec.confidence, ("#f3f4f6", "#374151"))
@@ -118,7 +118,7 @@ def render_table(recs: list[Rec]) -> list[tuple[int, str]]:
             dcol1, dcol2 = st.columns(2)
             dcol1.caption(f"**Intent check:** {rec.intent_check or 'n/a'}")
             dcol2.caption(f"**Numeric check:** {rec.numeric_check or 'n/a'}")
-            if rec.context_docs:
+            if getattr(rec, "context_docs", None):
                 with st.expander("Context Sources", expanded=False):
                     for j, doc in enumerate(rec.context_docs, 1):
                         st.caption(f"**Source {j}:** {doc}")
