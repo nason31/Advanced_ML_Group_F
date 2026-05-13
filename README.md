@@ -62,9 +62,9 @@ pytest tests/ -v
 
 ## Team
 
-| Area | Owner | Key files |
-|------|-------|-----------|
-| Data pipeline + LLM + Recommendations | Leticia | `src/data/`, `src/llm/`, `src/recommendations/`, `app/` |
-| Forecasting + RAG + Scripts | Justus | `src/forecast/`, `src/rag/`, `scripts/`, `notebooks/`, `app/` |
-| Business Plan | Alex | `docs/deliverables/business_plan/` |
-| Pitch deck + Demo script + GenAI log | Marie | `docs/deliverables/` |
+| Area | Owner | Student ID | Key files |
+|------|-------|------------|-----------|
+| Data pipeline + LLM + Recommendations | Leticia | 70033 | `src/data/`, `src/llm/`, `src/recommendations/`, `app/` |
+| Forecasting + RAG + Scripts | Justus | 70106 | `src/forecast/`, `src/rag/`, `scripts/`, `notebooks/`, `app/` |
+| Business Plan | Alex | 70299 | `docs/deliverables/business_plan/` |
+| Pitch deck + Demo script + GenAI log | Marie | 73606 | `docs/deliverables/` |
