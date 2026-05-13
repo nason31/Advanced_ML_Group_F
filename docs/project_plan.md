@@ -85,16 +85,15 @@
 | 🔵 Business | Business plan - unit economics | ✅ Done | Tech notes already in outline.md with exact numbers. Alex to write up the full section - no TBDs allowed at submission. |
 | 🔵 Business | Business plan - moat & safety | ✅ Done | Tech notes already in outline.md with 4 moat arguments and guard specifics. Alex to write up. |
 | 🔵 Business | ROI numbers + competitor research | ✅ Done | 0.5% margin improvement story needs real comparable numbers. Research 1-2 competitors (Relex, Blue Yonder) for the "why not them" answer. |
-| 🟠 Product | Pitch deck design | ❌ Open | Marie owns. Slide order: problem → solution → demo → tech stack → business model → moat → ask. Investor pitch tone, no walls of text. |
+| 🟠 Product | Pitch deck design | ✅ Done | Marie owns. Slide order: problem → solution → demo → tech stack → business model → moat → ask. Investor pitch tone, no walls of text. |
 | ⚪ Whole team | GenAI transparency log | ✅ Done | Everyone logs own sessions. Marie compiles final appendix. LLM judge checks for completeness - no back-filling. |
 | ⚪ Whole team | Finalize pitch deck | ✅ Done | Full design pass. Every slide earns its place. |
-| 🟠 Product | Dry runs | ❌ Open | At least 2 full run-throughs with the live demo cold (fresh browser, no cached state). Time it. |
-| 🟠 Product | Q&A prep | ❌ Open | Practice answers to: what's your moat, why not OpenAI, hallucination risk, data privacy, forecasting accuracy, GTM first customer. |
+| 🟠 Product | Dry runs | ✅ Done | At least 2 full run-throughs with the live demo cold (fresh browser, no cached state). Time it. |
+| 🟠 Product | Q&A prep | ✅ Done | Practice answers to: what's your moat, why not OpenAI, hallucination risk, data privacy, forecasting accuracy, GTM first customer. |
 
 ### Presentation day checklist
-- [ ] Demo works on presentation laptop (cold start, fresh browser)
-- [ ] Backup video recorded
-- [ ] Live URL confirmed up
+- [x] Demo works on presentation laptop (cold start, fresh browser)
+- [x] Live URL confirmed up
 - [x] GenAI log finalized and complete for all 4 members
 - [x] Business plan TBDs all filled - no placeholders at submission
 - [x] All Q&A answers practiced out loud

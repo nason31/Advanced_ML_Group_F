@@ -29,6 +29,15 @@ Human Review: [what you changed, verified, or rejected]
 
 <!-- Append new entries at the TOP (newest-first order). -->
 
+Date: 2026-05-13
+Team Member: Leticia
+Tool Used: Claude Code (claude-sonnet-4-6)
+Task: Presentation day technical preparation - full pipeline walkthrough, slide script review and correction, likely Q&A questions, RAG architecture deep dive, and project documentation cleanup.
+AI Contribution: Claude read every source file in the repository and produced a layer-by-layer technical walkthrough covering all 5 pipeline stages (data/features, LightGBM forecasting, RAG retrieval, Claude reasoning, hallucination guard, Streamlit delivery) with key thresholds, file references, and the moat argument. Then reviewed three slide scripts (Pipeline, Performance, Guard) and identified four errors: (1) "WRMSSE score of 74%" framing - WRMSSE is a loss metric, lower is better, correct phrasing is "0.74 below the competition median of 0.78"; (2) "SNAP??" - explained as Supplemental Nutrition Assistance Program benefit days causing demand spikes in M5 data, recommended replacing with plain-language alternatives for non-US audiences; (3) intent check description was wrong - it checks alignment with forecast direction, not just presence of a decision; (4) timing overruns on slides 4 and 6 (~115 words each at ~50 seconds vs 35-40 second targets). Produced clean revised scripts within budget. Generated a prioritised list of 6 likely judge questions with one-sentence model answers. Explained the RAG architecture in plain language: documents are derived entirely from the M5 dataset (not external data), are per-store (each document tagged with store ID), and cover 5 statistical fact types (SNAP lift, event lift, weekday patterns, price elasticity, YoY trend, per-SKU summaries for top 50 SKUs per store). Updated CLAUDE.md: added live URL, marked business plan as complete with correct path (docs/deliverables/business_plan/), and expanded the file map from 9 to 30+ entries covering every current source file with descriptions and key numbers. Updated docs/project_plan.md: marked pitch deck design, dry runs, and Q&A prep as done; removed backup video item from presentation day checklist; ticked demo and live URL checklist items.
+Human Review: Confirmed all script corrections. Directed the RAG explanation after identifying the original description was too jargon-heavy for the audience. Decided to drop SNAP terminology entirely from slide 4 in favour of plain-language examples. Confirmed project plan status for each item (done vs still open). Approved all CLAUDE.md and project_plan.md changes.
+
+---
+
 Date: 2026-05-11
 Team Member: Leticia
 Tool Used: Claude Code (claude-sonnet-4-6)

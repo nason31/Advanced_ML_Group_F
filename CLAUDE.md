@@ -16,6 +16,8 @@ This file gives Claude instant context on the project, the grading criteria, how
 
 **Tech stack:** Python, LightGBM, ChromaDB (RAG), Claude API (LLM reasoning), Streamlit (frontend), M5 Forecasting dataset.
 
+**Live app:** https://advancedmlgroupf-6rpnzwmnplfct2jjiiy3n6.streamlit.app/
+
 ---
 
 ## 2. Course & Grading Context
@@ -55,15 +57,12 @@ All GenAI usage must be logged in `docs/genai_transparency_log.md`. Unacknowledg
 ### Deliverable 1: Business Plan
 - Target market, value proposition, GTM strategy
 - Unit economics: token costs per transaction, hosting, vector DB storage, gross margin
-- GenAI Transparency Log as appendix (compiled from `docs/genai_transparency_log.md`)
-- **Done when:** every TBD in `docs/business_plan/outline.md` is filled with real numbers
+- GenAI Transparency Log as appendix
+- **Status: COMPLETE.** All files in `docs/deliverables/business_plan/`. GenAI log at `docs/deliverables/business_plan/genai_transparency_log.md`.
 
 ### Deliverable 2: Full-Stack Deployable Solution
 - Working prototype with UI (Streamlit) and AI backend
-- Deployed to a live URL (Streamlit Cloud target)
-- Step-by-step execution visible: from prompt engineering to system integration
-- No command-line-only tools
-- **Done when:** a non-technical person can open the URL and use it without instructions
+- **Status: LIVE** at https://advancedmlgroupf-6rpnzwmnplfct2jjiiy3n6.streamlit.app/
 
 ---
 
@@ -81,21 +80,37 @@ All GenAI usage must be logged in `docs/genai_transparency_log.md`. Unacknowledg
 ## 5. Architecture & Key Files
 
 ```
-data/raw/               M5 Forecasting dataset (CSV files)
-src/data/loader.py      load_m5() - raw DataFrames
-src/data/features.py    build_features() - feature matrix
-src/forecast/model.py   train() / predict() via LightGBM
-src/forecast/evaluate.py WRMSSE metric logging
-src/rag/retriever.py    retrieve() - ChromaDB vector store
-src/llm/reasoner.py     reason() - Claude API call with forecast + RAG context
-src/llm/guard.py        check() - hallucination guard, cross-checks LLM claims
-src/recommendations/engine.py  run_pipeline() - returns list[Rec]
-app/main.py             Streamlit UI: briefing cards, accept/reject, audit trail
-docs/project_plan.md    3-week plan with checklists
-docs/genai_transparency_log.md  Required deliverable - log every AI session here
-docs/business_plan/outline.md  Business plan (many TBDs still to fill)
-docs/architecture.md    Full stack diagram
-docs/feature_overview.md       Feature table with rubric mapping
+data/raw/                        M5 Forecasting dataset (CSV files)
+data/processed/                  Pre-built model files and feature parquets (model_*.pkl, features_*.parquet, idmap_*.parquet)
+data/vector_store/               ChromaDB persistent vector store (382 documents)
+data/rag_source/                 Plain-text blurbs ingested into ChromaDB
+
+src/data/loader.py               load_m5() - raw DataFrames
+src/data/features.py             build_features() - feature matrix with lag + rolling features
+src/data/product_names.py        get_product_name() / get_dept_name() - human-readable SKU labels
+src/forecast/model.py            train() / predict() via LightGBM
+src/forecast/serve.py            forecast_with_names() - serve-time adapter, loads persisted model
+src/forecast/evaluate.py         wrmsse() - WRMSSE metric (lower is better, ours: 0.74, median: 0.78)
+src/rag/ingest.py                ingest_docs() - embed text files into ChromaDB
+src/rag/retriever.py             retrieve() - semantic search, returns top-k context docs
+src/llm/prompts.py               SYSTEM_PROMPT, build_user_prompt(), QA_SYSTEM_PROMPT, build_qa_prompt()
+src/llm/reasoner.py              reason() - Claude Sonnet 4.6 call with prompt caching + retry
+src/llm/guard.py                 check() - 54-phrase intent check + 10% numeric tolerance check
+src/llm/qa.py                    answer_question() - chat Q&A grounded in forecast + RAG
+src/recommendations/summarize.py summarize_forecast() - PROMOTE(>+50%) / RESTOCK(+15-50%) / MARKDOWN(<-15%) buckets
+src/recommendations/engine.py    run_pipeline() - orchestrates forecast -> RAG -> LLM -> guard, parallel via ThreadPoolExecutor
+
+scripts/train_forecast.py        Train and persist LightGBM models per store
+scripts/build_rag_corpus.py      Generate 382 context blurbs from M5 data and ingest into ChromaDB
+
+app/main.py                      Streamlit UI: briefing cards, accept/reject, audit trail, Q&A chat
+app/components/briefing_card.py  render_table() - recommendation cards with badges
+app/components/audit_trail.py    render_audit() - decision log display
+
+docs/deliverables/business_plan/ Complete business plan (market sizing, unit economics, GTM)
+docs/deliverables/business_plan/genai_transparency_log.md  Required graded deliverable
+docs/architecture.md             Full stack diagram
+docs/feature_overview.md         Feature table with rubric mapping
 ```
 
 ---
